@@ -1,10 +1,10 @@
 package db;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.locks.ReentrantReadWriteLock.ReadLock;
 
+import org.apache.log4j.Logger;
 import org.mapdb.BTreeMap;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
@@ -16,6 +16,13 @@ public class FileMapDb {
 	private DB db = DBMaker.fileDB("test.db").make();
 	private BTreeMap<String, List<StockSymbol>> stockMap;
 
+	private static final Logger LOGGER = Logger.getLogger(FileMapDb.class);
+
+	private static FileMapDb myDB;
+	static {
+		myDB = new FileMapDb();
+	}
+
 	/**
 	 * Initializes the database.
 	 */
@@ -23,37 +30,40 @@ public class FileMapDb {
 
 		stockMap = (BTreeMap<String, List<StockSymbol>>) db.treeMap("stock", Serializer.STRING, Serializer.JAVA)
 				.makeOrGet();
-//		ReadLock readLock = db.getLock$mapdb().readLock();
-//		readLock.lock();
-//		Map<String, Object> allEntries = db.getAll();
-//		readLock.unlock();
-
-//		System.out.println(allEntries);
 	}
 
 	public boolean save(StockSymbol stockSymbol) {
 		try {
 			List<StockSymbol> stockList = stockMap.get(stockSymbol.getSymbol());
-			
+
 			if (stockList == null) {
 				stockList = new ArrayList<StockSymbol>();
 			} else {
-				System.out.println(stockSymbol.getSymbol()+ " no. of entries " + stockList.size());
+				Collections.sort(stockList);
+				stockList.forEach(stock -> {
+					if (LOGGER.isDebugEnabled()) {
+						LOGGER.debug(stock);
+					}
+				});
 			}
 			if (!stockList.contains(stockSymbol)) {
 				stockList.add(stockSymbol);
 				stockMap.put(stockSymbol.getSymbol(), stockList);
 				db.commit();
 				return true;
+			} else {
+				LOGGER.debug("Already contains similar record");
+				return false;
 			}
 		} catch (Throwable th) {
+			LOGGER.error(th.getMessage(),th);
 			db.rollback();
 		}
 
 		return false;
 	}
 
-	public FileMapDb() {
+	private FileMapDb() {
 		init();
 	}
 
@@ -61,6 +71,10 @@ public class FileMapDb {
 		if (db != null) {
 			db.close();
 		}
+	}
+	
+	public static FileMapDb getInstance() {
+		return myDB;
 	}
 
 }

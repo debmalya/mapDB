@@ -2,7 +2,7 @@ package model;
 
 import java.io.Serializable;
 
-public class StockSymbol implements Serializable{
+public class StockSymbol implements Serializable, Comparable<StockSymbol>{
 	/**
 	 * 
 	 */
@@ -44,12 +44,21 @@ public class StockSymbol implements Serializable{
 
 	
 
+	
+
+	
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result + Float.floatToIntBits(changePercentage);
+		long temp;
+		temp = Double.doubleToLongBits(price);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		temp = Double.doubleToLongBits(priceChange);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
 		result = prime * result + ((symbol == null) ? 0 : symbol.hashCode());
-		result = prime * result + (int) (timeStamp ^ (timeStamp >>> 32));
 		return result;
 	}
 
@@ -62,12 +71,16 @@ public class StockSymbol implements Serializable{
 		if (getClass() != obj.getClass())
 			return false;
 		StockSymbol other = (StockSymbol) obj;
+		if (Float.floatToIntBits(changePercentage) != Float.floatToIntBits(other.changePercentage))
+			return false;
+		if (Double.doubleToLongBits(price) != Double.doubleToLongBits(other.price))
+			return false;
+		if (Double.doubleToLongBits(priceChange) != Double.doubleToLongBits(other.priceChange))
+			return false;
 		if (symbol == null) {
 			if (other.symbol != null)
 				return false;
 		} else if (!symbol.equals(other.symbol))
-			return false;
-		if (timeStamp != other.timeStamp)
 			return false;
 		return true;
 	}
@@ -106,8 +119,31 @@ public class StockSymbol implements Serializable{
 
 	@Override
 	public String toString() {
-		return "StockSymbol [timeStamp=" + timeStamp + ", symbol=" + symbol + ", price=" + price + ", priceChange="
-				+ priceChange + ", changePercentage=" + changePercentage + "]";
+		StringBuilder aboutMe = new StringBuilder();
+		aboutMe.append("StockSymbol ");
+		aboutMe.append("[timeStamp=");
+		aboutMe.append(timeStamp);
+		aboutMe.append(", symbol=");
+		aboutMe.append(symbol);
+		aboutMe.append(", price=");
+		aboutMe.append(price);
+		aboutMe.append(", priceChange=");
+		aboutMe.append(priceChange);
+		aboutMe.append(", changePercentage=");
+		aboutMe.append(changePercentage);
+		aboutMe.append("]");
+		
+		return aboutMe.toString();
+	}
+
+	@Override
+	public int compareTo(StockSymbol o) {
+		if (timeStamp > o.timeStamp){
+			return 1;
+		} else if (timeStamp < o.timeStamp){
+			return -1;
+		}
+		return 0;
 	}
 
 	
