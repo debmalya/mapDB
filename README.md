@@ -1,8 +1,8 @@
 # mapDB
 Example of mapDB and JSoup.
 
-It takes stock values from https://www.google.com/finance and stores into file database.
+It takes stock values from https://www.google.com/finance and stores into mapDB file database.
 
-StockQuote.java is from http://www.cs.princeton.edu and created by Professor Sedgewick and Wayne. I modified little bit. In.java is created by me.
+StockQuote.java is from http://www.cs.princeton.edu and created by Professor Sedgewick and Wayne. I modified it. In.java is created by me.
 
 A stock based application using jsoup, mapdb and google finance. Storing stock values in mapDB.
