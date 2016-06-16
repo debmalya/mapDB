@@ -4,6 +4,15 @@
 	<groupId>com.deb</groupId>
 	<artifactId>stock</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+
+	<!-- About developers -->
+	<developers>
+		<developer>
+			<name>Debmalya Jash</name>
+		</developer>
+	</developers>
+
+
 	<dependencies>
 		<dependency>
 			<groupId>com.googlecode.cqengine</groupId>
@@ -29,6 +38,11 @@
 			<groupId>org.mapdb</groupId>
 			<artifactId>mapdb</artifactId>
 			<version>3.0.0-M6</version>
+		</dependency>
+		<dependency>
+			<groupId>com.sun.net.httpserver</groupId>
+			<artifactId>http</artifactId>
+			<version>20070405</version>
 		</dependency>
 	</dependencies>
 

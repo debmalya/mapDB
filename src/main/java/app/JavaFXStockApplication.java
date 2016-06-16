@@ -61,6 +61,7 @@ public class JavaFXStockApplication extends Application {
 
 		final VBox vbox = new VBox();
 		vbox.setSpacing(5);
+		vbox.setMaxHeight(800);
 		vbox.getChildren().addAll(stockSymbolTable, btn);
 
 		Scene scene = new Scene(new Group());
@@ -68,6 +69,7 @@ public class JavaFXStockApplication extends Application {
 		primaryStage.setScene(scene);
 		primaryStage.setWidth(450);
 		primaryStage.setHeight(460);
+		primaryStage.setTitle("World Market");
 		primaryStage.show();
 
 	}
