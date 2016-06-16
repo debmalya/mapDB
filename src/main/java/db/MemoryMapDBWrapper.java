@@ -11,12 +11,14 @@ import org.mapdb.DBMaker;
  *
  */
 public class MemoryMapDBWrapper {
+
 	
+
 	/**
 	 * ByteBuffer for memory. User DBMaker.memoryDB
 	 */
 	private DB memoryDB = DBMaker.memoryDB().make();
-	
+
 	/**
 	 * DirectByteBuffer for direct memory. Use DBMaker.memoryDirectDB()
 	 */
@@ -24,6 +26,7 @@ public class MemoryMapDBWrapper {
 
 	/**
 	 * Get memory DB.
+	 * 
 	 * @return memory DB.
 	 */
 	public DB getMemoryDB() {
@@ -32,6 +35,7 @@ public class MemoryMapDBWrapper {
 
 	/**
 	 * Get direct memory DB.
+	 * 
 	 * @return direct memory DB.
 	 */
 	public DB getMemoryDirectDB() {
