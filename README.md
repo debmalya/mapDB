@@ -9,4 +9,4 @@ A stock based application using jsoup, mapdb and google finance. Storing stock v
 
 Run worldMarket.sh
 
-![ScreenShot](/images/WorldMarketScreenShot.png)
+![World Market with Java FX, MapDB, GoogleFinance](WorldMarketScreenShot.png)
