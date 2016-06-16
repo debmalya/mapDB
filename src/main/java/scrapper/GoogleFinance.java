@@ -13,48 +13,47 @@ import org.jsoup.select.Elements;
 import model.StockSymbol;
 
 public class GoogleFinance {
-	
+
 	private static final Logger LOGGER = Logger.getLogger(GoogleFinance.class);
 
 	/**
 	 * To retrieve price change.
 	 */
-	private static final String CHANGE = "change";
-	
+	public static final String CHANGE = "change";
+
 	/**
 	 * To retrieve price.
 	 */
-	private static final String PRICE = "price";
-	
+	public static final String PRICE = "price";
+
 	/**
 	 * To retrieve symbol.
 	 */
-	private static final String SYMBOL = ".symbol";
-	
+	public static final String SYMBOL = ".symbol";
+
 	/**
 	 * To retrieve each row.
 	 */
-	private static final String ROW = "tr";
-	
+	public static final String ROW = "tr";
+
 	/**
 	 * To retrieve quotes.
 	 */
-	private static final String QUOTES = ".quotes";
-	
+	public static final String QUOTES = ".quotes";
+
 	/**
 	 * To retrieve from google finance.
 	 */
-	private static final String GOOGLE_URL = "https://www.google.com/finance";
+	public static final String GOOGLE_URL = "https://www.google.com/finance";
 
 	public static void main(String[] args) {
-		
 
 	}
 
 	public List<StockSymbol> parseData() {
 		List<StockSymbol> symbolList = new ArrayList<StockSymbol>();
 		try {
-			
+
 			Element doc = Jsoup.connect(GOOGLE_URL).get();
 			Elements quotes = doc.select(QUOTES);
 			quotes.forEach(quote -> {
@@ -71,10 +70,10 @@ public class GoogleFinance {
 					}
 				});
 			});
-			
-//			symbolList.forEach(symbol -> System.out.println(symbol));
+
+			// symbolList.forEach(symbol -> System.out.println(symbol));
 		} catch (IOException e) {
-			LOGGER.error(e.getMessage(),e);
+			LOGGER.error(e.getMessage(), e);
 		}
 		return symbolList;
 	}
@@ -94,7 +93,7 @@ public class GoogleFinance {
 				}
 			}
 		} catch (Throwable th) {
-			LOGGER.error("Not able to convert :" + strPrice,th);
+			LOGGER.error("Not able to convert :" + strPrice, th);
 		}
 	}
 

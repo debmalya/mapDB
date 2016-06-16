@@ -10,7 +10,7 @@ import db.FileMapDb;
 import model.StockSymbol;
 
 public class GoogleFinanceTest {
-	
+
 	private static final Logger LOGGER = Logger.getLogger(GoogleFinanceTest.class);
 
 	@Test
@@ -20,10 +20,17 @@ public class GoogleFinanceTest {
 			GoogleFinance gf = new GoogleFinance();
 			List<StockSymbol> stockList = gf.parseData();
 
-			stockList.forEach(stock -> db.save(stock));
+			stockList.forEach(stock -> {
+				try {
+					db.save(stock);
+				} catch (Exception e) {
+					LOGGER.error(e.getMessage(), e);
+					Assert.assertFalse(e.getMessage(), true);
+				}
+			});
 		} catch (Throwable th) {
-			LOGGER.error(th.getMessage(),th);
-			Assert.assertFalse(th.getMessage(),true);
+			LOGGER.error(th.getMessage(), th);
+			Assert.assertFalse(th.getMessage(), true);
 		} finally {
 			db.closeDB();
 		}

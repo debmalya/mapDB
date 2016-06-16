@@ -12,7 +12,7 @@ import org.mapdb.Serializer;
 
 import model.StockSymbol;
 
-public class FileMapDb {
+public class FileMapDb  extends MapDB {
 	private DB db = DBMaker.fileDB("test.db").make();
 	private BTreeMap<String, List<StockSymbol>> stockMap;
 
@@ -26,13 +26,15 @@ public class FileMapDb {
 	/**
 	 * Initializes the database.
 	 */
+	@SuppressWarnings({ "unchecked", "deprecation" })
 	private void init() {
 
 		stockMap = (BTreeMap<String, List<StockSymbol>>) db.treeMap("stock", Serializer.STRING, Serializer.JAVA)
 				.makeOrGet();
+		
 	}
 
-	public boolean save(StockSymbol stockSymbol) {
+	public boolean save(StockSymbol stockSymbol) throws Exception {
 		try {
 			List<StockSymbol> stockList = stockMap.get(stockSymbol.getSymbol());
 
@@ -58,9 +60,10 @@ public class FileMapDb {
 		} catch (Throwable th) {
 			LOGGER.error(th.getMessage(),th);
 			db.rollback();
+			throw new Exception(th.getMessage());
 		}
 
-		return false;
+		
 	}
 
 	private FileMapDb() {
@@ -75,6 +78,13 @@ public class FileMapDb {
 	
 	public static FileMapDb getInstance() {
 		return myDB;
+	}
+	
+	public DB createVolumeDB(final String dbFile) {
+		return DBMaker.fileDB(dbFile)
+		.fileMmapEnable()
+		.closeOnJvmShutdown()
+		.make();
 	}
 
 }

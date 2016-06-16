@@ -79,7 +79,7 @@ public class StockQuote {
 			} else {
 				LOGGER.error(s + " is not available, please check.");
 			}
-		} catch (MalformedURLException e) {
+		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
 		}
 
