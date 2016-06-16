@@ -8,3 +8,5 @@ StockQuote.java is from http://www.cs.princeton.edu and created by Professor Sed
 A stock based application using jsoup, mapdb and google finance. Storing stock values in mapDB.
 
 Run worldMarket.sh
+
+![World Market with Java FX, MapDB, GoogleFinance](WorldMarketScreenShot.png)
