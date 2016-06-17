@@ -100,6 +100,10 @@ public class StockDetails implements Serializable{
 	public static final Attribute<StockDetails, String> SYMBOL = new SimpleAttribute<StockDetails, String>("symbol") {
         public String getValue(StockDetails stockDetails, QueryOptions queryOptions) { return stockDetails.symbol; }
     };
+    
+    public static final Attribute<StockDetails, String> EXCHANGE = new SimpleAttribute<StockDetails, String>("exchange") {
+        public String getValue(StockDetails stockDetails, QueryOptions queryOptions) { return stockDetails.exchange; }
+    };
 
 	@Override
 	public String toString() {

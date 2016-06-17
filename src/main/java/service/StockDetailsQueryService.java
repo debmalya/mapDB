@@ -4,7 +4,9 @@
 package service;
 
 import static com.googlecode.cqengine.query.QueryFactory.endsWith;
+import static com.googlecode.cqengine.query.QueryFactory.or;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -53,6 +55,7 @@ public class StockDetailsQueryService {
 				}
 			});
 			stocks.addIndex(NavigableIndex.onAttribute(StockDetails.SYMBOL));
+			stocks.addIndex(NavigableIndex.onAttribute(StockDetails.EXCHANGE));
 		} catch (Throwable th) {
 			LOGGER.error(th.getMessage(), th);
 		} finally {
@@ -74,6 +77,22 @@ public class StockDetailsQueryService {
 		for (StockDetails car : stocks.retrieve(query1)) {
 			System.out.println(car);
 		}
+	}
+	
+	/**
+	 * TO query all the stocks with stock symbol
+	 * 
+	 * @param querySymbol
+	 *            to do the query . (e.g. goog, msft,)
+	 * @param exchange stock exchange.           
+	 */
+	public List<StockDetails> queryBySymbolOrExchange(final String querySymbol,final String exchange) {
+		Query<StockDetails> query1 = or(endsWith(StockDetails.SYMBOL, querySymbol),endsWith(StockDetails.EXCHANGE, exchange));
+		List<StockDetails> results = new ArrayList<StockDetails>();
+		for (StockDetails car : stocks.retrieve(query1)) {
+			results.add(car);
+		}
+		return results;
 	}
 
 	public StockDetailsQueryService() {
