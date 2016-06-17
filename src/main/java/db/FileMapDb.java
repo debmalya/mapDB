@@ -48,15 +48,24 @@ public class FileMapDb  extends MapDB {
 					}
 				});
 			}
+			
+			boolean result = false;
 			if (!stockList.contains(stockSymbol)) {
 				stockList.add(stockSymbol);
 				stockMap.put(stockSymbol.getSymbol(), stockList);
 				db.commit();
-				return true;
+				
+				result = true;
 			} else {
 				LOGGER.debug("Already contains similar record");
-				return false;
+				result = false;
 			}
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug("============================================================");
+				LOGGER.debug(stockSymbol.getSymbol()+ " no. of records " + stockList.size());
+				LOGGER.debug("============================================================");
+			}
+			return result;
 		} catch (Throwable th) {
 			LOGGER.error(th.getMessage(),th);
 			db.rollback();

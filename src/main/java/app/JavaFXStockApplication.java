@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
@@ -12,7 +13,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import javafx.scene.Group;
+import javafx.concurrent.Task;
 import model.StockSymbol;
 import service.StockService;
 
@@ -30,10 +31,9 @@ public class JavaFXStockApplication extends Application {
 
 			@Override
 			public void handle(ActionEvent event) {
-				stockService.update();
-				stockSymbolTable.getItems().clear();
-				stockSymbolTable.getItems().addAll(stockService.getStockSymbols());
+				updateTable();
 			}
+
 		});
 
 		StackPane root = new StackPane();
@@ -57,21 +57,25 @@ public class JavaFXStockApplication extends Application {
 
 		stockSymbolTable.getColumns().addAll(symbolCol, priceCol, priceChange, changePerc);
 		stockSymbolTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
 		stockSymbolTable.setItems(FXCollections.observableArrayList(stockService.getStockSymbols()));
 
 		final VBox vbox = new VBox();
-		vbox.setSpacing(5);
-		vbox.setMaxHeight(800);
+		vbox.setSpacing(2);
+		vbox.setPrefWidth(450);
+		vbox.setMinHeight(700);
 		vbox.getChildren().addAll(stockSymbolTable, btn);
 
 		Scene scene = new Scene(new Group());
 		((Group) scene.getRoot()).getChildren().addAll(vbox);
+
 		primaryStage.setScene(scene);
 		primaryStage.setWidth(450);
 		primaryStage.setHeight(460);
 		primaryStage.setTitle("World Market");
 		primaryStage.show();
 
+		autoRefreshTable();
 	}
 
 	/**
@@ -80,5 +84,28 @@ public class JavaFXStockApplication extends Application {
 	 */
 	public static void main(String[] args) {
 		launch(args);
+	}
+
+	private void updateTable() {
+
+		stockService.update();
+		stockSymbolTable.getItems().clear();
+		stockSymbolTable.getItems().addAll(stockService.getStockSymbols());
+	}
+
+	private void autoRefreshTable() {
+		Task<Void> myUpdatingTask = new Task<Void>() {
+			@Override
+			protected Void call() throws Exception {
+				updateTable();
+				return null;
+
+			}
+		};
+
+		// and then you run it like this:
+		Thread hilo = new Thread(myUpdatingTask);
+		hilo.setDaemon(true);
+		hilo.start();
 	}
 }

@@ -28,6 +28,8 @@ public class GoogleFinanceTest {
 					Assert.assertFalse(e.getMessage(), true);
 				}
 			});
+			
+			
 		} catch (Throwable th) {
 			LOGGER.error(th.getMessage(), th);
 			Assert.assertFalse(th.getMessage(), true);
