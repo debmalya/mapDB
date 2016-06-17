@@ -50,8 +50,6 @@ public class YhoStockQuote {
 				for (int i = 0; i < time.length ; i++) {
 					currentTime.append(time[i]);
 					currentTime.append(" ");
-//					lastTime.append(time[time.length / 2 + i]);
-//					lastTime.append(" ");
 				}
 			}
 
@@ -60,20 +58,20 @@ public class YhoStockQuote {
 			try {
 				lastPrice = Float.parseFloat(clossingPrice);
 			} catch (NumberFormatException nfe) {
-				LOGGER.error(nfe.getMessage(), nfe);
+				LOGGER.error(nfe.getMessage());
 			}
 
-			boolean upIndicator = false;
+//			boolean upIndicator = false;
 
-			LOGGER.debug(symbol);
-			LOGGER.debug(stockExchange);
-			LOGGER.debug(currentPrice);
-			LOGGER.debug(currentTime.toString());
-
-			LOGGER.debug(upIndicator);
-			LOGGER.debug(lastPrice);
-			LOGGER.debug(lastTime.toString());
-			LOGGER.debug(quoteSummaryElement);
+//			LOGGER.debug(symbol);
+//			LOGGER.debug(stockExchange);
+//			LOGGER.debug(currentPrice);
+//			LOGGER.debug(currentTime.toString());
+//
+//			LOGGER.debug(upIndicator);
+//			LOGGER.debug(lastPrice);
+//			LOGGER.debug(lastTime.toString());
+//			LOGGER.debug(quoteSummaryElement);
 
 			StockDetails stockDetails = new StockDetails(stockExchange, symbol, currentPrice, lastPrice, 0.00f, "",
 					lastTime.toString(), currentTime.toString());

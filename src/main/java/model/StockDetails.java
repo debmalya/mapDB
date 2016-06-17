@@ -1,10 +1,16 @@
 package model;
 
+import java.io.Serializable;
+
 import com.googlecode.cqengine.attribute.Attribute;
 import com.googlecode.cqengine.attribute.SimpleAttribute;
 import com.googlecode.cqengine.query.option.QueryOptions;
 
-public class StockDetails {
+public class StockDetails implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2031420822267600090L;
 	private String exchange;
 	private String symbol;
 	private float currentPrice;

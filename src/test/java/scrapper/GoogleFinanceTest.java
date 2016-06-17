@@ -15,7 +15,7 @@ public class GoogleFinanceTest {
 
 	@Test
 	public void testParseData() {
-		FileMapDb db = FileMapDb.getInstance();
+		FileMapDb db = new FileMapDb("test.db");
 		try {
 			GoogleFinance gf = new GoogleFinance();
 			List<StockSymbol> stockList = gf.parseData();

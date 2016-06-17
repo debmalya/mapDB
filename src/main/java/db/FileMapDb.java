@@ -8,20 +8,19 @@ import org.apache.log4j.Logger;
 import org.mapdb.BTreeMap;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
+import org.mapdb.HTreeMap;
 import org.mapdb.Serializer;
 
+import model.StockDetails;
 import model.StockSymbol;
 
-public class FileMapDb  extends MapDB {
-	private DB db = DBMaker.fileDB("test.db").make();
+public class FileMapDb extends MapDB {
+	private DB db;
 	private BTreeMap<String, List<StockSymbol>> stockMap;
 
-	private static final Logger LOGGER = Logger.getLogger(FileMapDb.class);
+	private HTreeMap<String, List<StockDetails>> stockDetailsMap;
 
-	private static FileMapDb myDB;
-	static {
-		myDB = new FileMapDb();
-	}
+	private static final Logger LOGGER = Logger.getLogger(FileMapDb.class);
 
 	/**
 	 * Initializes the database.
@@ -31,9 +30,21 @@ public class FileMapDb  extends MapDB {
 
 		stockMap = (BTreeMap<String, List<StockSymbol>>) db.treeMap("stock", Serializer.STRING, Serializer.JAVA)
 				.makeOrGet();
-		
+
+		stockDetailsMap = (HTreeMap<String, List<StockDetails>>) db.hashMap("stockDetails")
+				.keySerializer(Serializer.STRING).valueSerializer(Serializer.JAVA).makeOrGet();
 	}
 
+	/**
+	 * Saves stock symbol
+	 * 
+	 * @param stockSymbol
+	 *            to store
+	 * @return true if saved successfully, false if record already exists no
+	 *         need to save.
+	 * @throws Exception
+	 *             if any exception occurs.
+	 */
 	public boolean save(StockSymbol stockSymbol) throws Exception {
 		try {
 			List<StockSymbol> stockList = stockMap.get(stockSymbol.getSymbol());
@@ -48,13 +59,13 @@ public class FileMapDb  extends MapDB {
 					}
 				});
 			}
-			
+
 			boolean result = false;
 			if (!stockList.contains(stockSymbol)) {
 				stockList.add(stockSymbol);
 				stockMap.put(stockSymbol.getSymbol(), stockList);
 				db.commit();
-				
+
 				result = true;
 			} else {
 				LOGGER.debug("Already contains similar record");
@@ -62,20 +73,68 @@ public class FileMapDb  extends MapDB {
 			}
 			if (LOGGER.isDebugEnabled()) {
 				LOGGER.debug("============================================================");
-				LOGGER.debug(stockSymbol.getSymbol()+ " no. of records " + stockList.size());
+				LOGGER.debug(stockSymbol.getSymbol() + " no. of records " + stockList.size());
 				LOGGER.debug("============================================================");
 			}
 			return result;
 		} catch (Throwable th) {
-			LOGGER.error(th.getMessage(),th);
+			LOGGER.error(th.getMessage(), th);
 			db.rollback();
 			throw new Exception(th.getMessage());
 		}
 
-		
 	}
 
-	private FileMapDb() {
+	/**
+	 * Saves stock symbol
+	 * 
+	 * @param stockDetails
+	 *            to store
+	 * @return true if saved successfully, false if record already exists no
+	 *         need to save.
+	 * @throws Exception
+	 *             if any exception occurs.
+	 */
+	public boolean save(StockDetails stockDetails) throws Exception {
+		try {
+			List<StockDetails> stockDetailsList = stockDetailsMap.get(stockDetails.getSymbol());
+
+			if (stockDetailsList == null) {
+				stockDetailsList = new ArrayList<StockDetails>();
+			} 
+
+			boolean result = false;
+
+			stockDetailsList.add(stockDetails);
+			stockDetailsMap.put(stockDetails.getSymbol(), stockDetailsList);
+			db.commit();
+
+			result = true;
+
+			if (LOGGER.isDebugEnabled()) {
+				stockDetailsList.forEach(stock -> {
+					LOGGER.debug(stock);
+				});
+				LOGGER.debug("============================================================");
+				LOGGER.debug(stockDetails.getSymbol() + " no. of records " + stockDetailsList.size());
+				LOGGER.debug("============================================================");
+			}
+			return result;
+		} catch (Throwable th) {
+			LOGGER.error(th.getMessage(), th);
+			db.rollback();
+			throw new Exception(th.getMessage());
+		}
+
+	}
+
+	/**
+	 * 
+	 * @param dbName
+	 *            database name. (e.g. test.db)
+	 */
+	public FileMapDb(final String dbName) {
+		db = DBMaker.fileDB(dbName).make();
 		init();
 	}
 
@@ -84,16 +143,9 @@ public class FileMapDb  extends MapDB {
 			db.close();
 		}
 	}
-	
-	public static FileMapDb getInstance() {
-		return myDB;
-	}
-	
+
 	public DB createVolumeDB(final String dbFile) {
-		return DBMaker.fileDB(dbFile)
-		.fileMmapEnable()
-		.closeOnJvmShutdown()
-		.make();
+		return DBMaker.fileDB(dbFile).fileMmapEnable().closeOnJvmShutdown().make();
 	}
 
 }

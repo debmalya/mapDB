@@ -21,7 +21,7 @@ public class StockDetailsQueryServiceTest {
 				allStocks.addAll(stockQuote.parse(eachQuote));
 			}
 		} catch (Exception e) {
-			Assert.assertFalse(e.getMessage(), true);
+			Assert.assertFalse("ERR :" + e.getMessage(), true);
 		}
 		
 		
