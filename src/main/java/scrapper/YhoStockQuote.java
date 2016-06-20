@@ -38,7 +38,7 @@ public class YhoStockQuote {
 			StringBuilder currentTime = new StringBuilder();
 			StringBuilder lastTime = new StringBuilder();
 			int l = time.length;
-			if (l == 6) {
+			if (l > 6) {
 				// both current time and last time were there
 				for (int i = 0; i < time.length / 2; i++) {
 					currentTime.append(time[i]);

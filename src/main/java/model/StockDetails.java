@@ -113,5 +113,31 @@ public class StockDetails implements Serializable{
 				+ "]";
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((currentPriceRecordTime == null) ? 0 : currentPriceRecordTime.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		StockDetails other = (StockDetails) obj;
+		if (currentPriceRecordTime == null) {
+			if (other.currentPriceRecordTime != null)
+				return false;
+		} else if (!currentPriceRecordTime.equals(other.currentPriceRecordTime))
+			return false;
+		return true;
+	}
+	
+
     
 }

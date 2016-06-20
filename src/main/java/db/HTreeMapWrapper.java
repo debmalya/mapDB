@@ -86,6 +86,31 @@ public class HTreeMapWrapper extends MapWrapper {
 	}
 
 	/**
+	 * Create a HTreeMap. Whenever it exceeds the passed size parameter. It will
+	 * store entries in the physical file.
+	 * 
+	 * @param cacheSize
+	 *            in GB.
+	 * @param physicalFileName
+	 *            where entries will be saved after expiration.
+	 * @return HTreeMap.
+	 */
+	public HTreeMap<?, ?> createSizeBasedExpirationalEnabledMapper(final long cacheSize,
+			final String physicalFileName) {
+		DB physicalDB = null;
+		try {
+			physicalDB = DBMaker.fileDB(physicalFileName).make();
+			HTreeMap onDisk = physicalDB.hashMap("_onDisk").createOrOpen();
+			return DBMaker.memoryShardedHashMap(16).expireAfterUpdate().expireStoreSize(cacheSize * 1024 * 1024 * 1024)
+					.expireOverflow(onDisk).createOrOpen();
+		} finally {
+			if (physicalDB != null) {
+				physicalDB.close();
+			}
+		}
+	}
+
+	/**
 	 * Creates HTreeMap from MapDB instance.
 	 * 
 	 * @param db

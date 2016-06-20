@@ -101,13 +101,15 @@ public class FileMapDb extends MapDB {
 
 			if (stockDetailsList == null) {
 				stockDetailsList = new ArrayList<StockDetails>();
-			} 
+			}
 
 			boolean result = false;
 
-			stockDetailsList.add(stockDetails);
-			stockDetailsMap.put(stockDetails.getSymbol(), stockDetailsList);
-			db.commit();
+			if (!stockDetailsList.contains(stockDetails)) {
+				stockDetailsList.add(stockDetails);
+				stockDetailsMap.put(stockDetails.getSymbol(), stockDetailsList);
+				db.commit();
+			}
 
 			result = true;
 
@@ -144,6 +146,11 @@ public class FileMapDb extends MapDB {
 		}
 	}
 
+	/**
+	 * 
+	 * @param dbFile
+	 * @return
+	 */
 	public DB createVolumeDB(final String dbFile) {
 		return DBMaker.fileDB(dbFile).fileMmapEnable().closeOnJvmShutdown().make();
 	}

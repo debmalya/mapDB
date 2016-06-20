@@ -95,16 +95,6 @@ public class StockDetailsQueryService {
 		return results;
 	}
 
-	public StockDetailsQueryService() {
-		try {
-			fileDB = new FileMapDb("stock.db");
-		} catch (Throwable th) {
-			LOGGER.error(th.getMessage(),th);
-		} finally {
-			if (fileDB != null) {
-				fileDB.closeDB();
-			}
-		}
-	}
+	
 
 }
