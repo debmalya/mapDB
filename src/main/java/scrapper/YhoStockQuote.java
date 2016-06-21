@@ -57,23 +57,17 @@ public class YhoStockQuote {
 			float lastPrice = 0.00f;
 			try {
 				lastPrice = Float.parseFloat(clossingPrice);
+				
 			} catch (NumberFormatException nfe) {
 				LOGGER.error(nfe.getMessage());
 			}
 
-//			boolean upIndicator = false;
+			float change = 0.00f;
+			if (currentPrice != 0.00f && lastPrice != 0.00f){
+				change = currentPrice - lastPrice;
+			}
 
-//			LOGGER.debug(symbol);
-//			LOGGER.debug(stockExchange);
-//			LOGGER.debug(currentPrice);
-//			LOGGER.debug(currentTime.toString());
-//
-//			LOGGER.debug(upIndicator);
-//			LOGGER.debug(lastPrice);
-//			LOGGER.debug(lastTime.toString());
-//			LOGGER.debug(quoteSummaryElement);
-
-			StockDetails stockDetails = new StockDetails(stockExchange, symbol, currentPrice, lastPrice, 0.00f, "",
+			StockDetails stockDetails = new StockDetails(stockExchange, symbol, currentPrice, lastPrice, change, "",
 					lastTime.toString(), currentTime.toString());
 			stockDetalsList.add(stockDetails);
 		} catch (IOException e) {

@@ -15,11 +15,19 @@
  */
 package xodus;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
 import jetbrains.exodus.ByteIterable;
 import jetbrains.exodus.bindings.StringBinding;
+import jetbrains.exodus.entitystore.Entity;
+import jetbrains.exodus.entitystore.EntityIterable;
+import jetbrains.exodus.entitystore.PersistentEntityStore;
+import jetbrains.exodus.entitystore.PersistentEntityStores;
+import jetbrains.exodus.entitystore.StoreTransaction;
 import jetbrains.exodus.env.Environment;
 import jetbrains.exodus.env.EnvironmentConfig;
 import jetbrains.exodus.env.Environments;
@@ -28,6 +36,7 @@ import jetbrains.exodus.env.StoreConfig;
 import jetbrains.exodus.env.Transaction;
 import jetbrains.exodus.env.TransactionalComputable;
 import jetbrains.exodus.env.TransactionalExecutable;
+import model.StockDetails;
 
 /**
  * @author debmalyajash
@@ -46,7 +55,15 @@ public class EnvironmentWrapper {
 	 */
 	private Environment env;
 
-	private static final Object Lock = new Object();
+	/**
+	 * Lock for initializing environment in thread safe way.
+	 */
+	private static final Object environmentLock = new Object();
+
+	/**
+	 * Lock for initializing persistent store in thread safe way.
+	 */
+	private static final Object persistentStoreLock = new Object();
 	/**
 	 * 
 	 */
@@ -55,6 +72,14 @@ public class EnvironmentWrapper {
 	public Environment getEnv() {
 		return env;
 	}
+
+	/**
+	 * With the blessings of PersistentStores we are opening new persistent
+	 * entity store.
+	 */
+	private PersistentEntityStore entityStore;
+	// =
+	// PersistentEntityStores.newInstance("/src/test/resource/PersistentStore/.myAppData");
 
 	/**
 	 * A transactional closure is used as the simplest way to manage
@@ -87,12 +112,15 @@ public class EnvironmentWrapper {
 	 */
 	public EnvironmentWrapper() throws Exception {
 		try {
-			synchronized (Lock) {
-				if (env == null) {
+
+			if (env == null) {
+				synchronized (environmentLock) {
 					env = Environments.newInstance("./src/test/resource/environment1/.myAppData");
 					LOGGER.debug("Default environment initialized.");
 				}
-				if (envWithoutGC == null) {
+			}
+			if (envWithoutGC == null) {
+				synchronized (environmentLock) {
 					envWithoutGC = Environments.newInstance("./src/test/resource/environment2/.myAppDataWithoutGC",
 							new EnvironmentConfig().setGcEnabled(false));
 					LOGGER.debug("Environment without garbage collection initialized.");
@@ -130,6 +158,128 @@ public class EnvironmentWrapper {
 			return true;
 		} catch (Throwable th) {
 			throw new Exception(th.getMessage(), th);
+		}
+	}
+
+	/**
+	 * 
+	 * @param directory
+	 *            where entity store will be created.
+	 * @return PersistentEntityStore
+	 * @throws Exception
+	 */
+	public PersistentEntityStore getPersistentStore(final String directory) throws Exception {
+		try {
+			if (entityStore == null) {
+				synchronized (persistentStoreLock) {
+					entityStore = PersistentEntityStores.newInstance(directory);
+				}
+			}
+			return entityStore;
+		} catch (Throwable th) {
+			LOGGER.error(th.getMessage(), th);
+			throw new Exception(th.getMessage(), th);
+		}
+	}
+
+	/**
+	 * Add stock details in persistent store.
+	 * 
+	 * @param stockDetails
+	 *            to be stored.
+	 * @return true if stored successfully.
+	 * @throws Exception
+	 *             if there is any error
+	 */
+	public boolean addStock(final List<StockDetails> stockList) throws Exception {
+		
+		final StoreTransaction txn = entityStore.beginTransaction();
+
+		try {
+			for (StockDetails stockDetails : stockList) {
+				// Setting entity
+				final Entity stockDetailsEntity = txn.newEntity("StockDetails");
+				stockDetailsEntity.setProperty("symbol", stockDetails.getSymbol());
+				stockDetailsEntity.setProperty("exchange", stockDetails.getExchange());
+				stockDetailsEntity.setProperty("currentPrice", stockDetails.getCurrentPrice());
+				stockDetailsEntity.setProperty("currentPriceRecordTime", stockDetails.getCurrentPriceRecordTime());
+				stockDetailsEntity.setProperty("lastPrice", stockDetails.getLastPrice());
+				stockDetailsEntity.setProperty("lastPriceRecordTime", stockDetails.getLastPriceRecordTime());
+				stockDetailsEntity.setProperty("marketCapital", stockDetails.getMarketCapital());
+				stockDetailsEntity.setProperty("change", stockDetails.getChange());
+				txn.saveEntity(stockDetailsEntity);
+				LOGGER.debug("Saved stock :" + stockDetails);
+			}
+
+			txn.flush();
+			txn.commit();
+			LOGGER.debug("Transaction committed");
+
+			return true;
+
+		} catch (Throwable th) {
+			txn.abort();
+			throw new Exception(th.getMessage());
+		} finally {
+			
+			entityStore.close();
+		}
+	}
+	
+	/**
+	 * 
+	 * @return List of all the stocks saved.
+	 * @throws Exception if any error occurs.
+	 */
+	public List<StockDetails> getStocks() throws Exception {
+		List<StockDetails> retrievedStockList =  new ArrayList<>();
+		final StoreTransaction txn = entityStore.beginReadonlyTransaction();
+		try {
+			final EntityIterable allStocks = txn.getAll("StockDetails");
+			for (Entity stock: allStocks) {
+				String symbol = (String) stock.getProperty("symbol");
+				String exchange = (String)stock.getProperty("exchange");
+				float currentPrice = (Float)stock.getProperty("currentPrice");
+				String currentPriceRecordTime = (String)stock.getProperty("currentPriceRecordTime");
+				float lastPrice = (Float)stock.getProperty("lastPrice"); 
+				String lastPriceRecordTime = (String)stock.getProperty("lastPriceRecordTime");
+				String marketCapital = (String)stock.getProperty("marketCapital");
+				float change = (Float)stock.getProperty("change"); 
+				
+			    
+			    StockDetails stockDetails = new StockDetails(exchange, symbol, currentPrice, lastPrice, change, marketCapital, lastPriceRecordTime, currentPriceRecordTime);
+			    retrievedStockList.add(stockDetails);
+			}
+
+		}catch(Throwable th) {
+			throw new Exception(th.getMessage(),th);
+		}finally {
+		}
+		return retrievedStockList;
+	}
+
+	/**
+	 * To get the value for a key. Using TransactionalComputable which returns a
+	 * value.
+	 * 
+	 * @param keyInStore
+	 *            key we want to retrieve
+	 * @param store
+	 *            from where we want to retrieve the value.
+	 * @return value.
+	 */
+	public String getValue(final String keyInStore, final Store store) {
+		final ByteIterable key = StringBinding.stringToEntry(keyInStore);
+		final ByteIterable value = env.computeInReadonlyTransaction(new TransactionalComputable<ByteIterable>() {
+			@Override
+			public ByteIterable compute(@NotNull final Transaction txn) {
+				return store.get(txn, key);
+			}
+		});
+		if (value != null) {
+			return StringBinding.entryToString(value);
+		} else {
+			return null;
 		}
 	}
 

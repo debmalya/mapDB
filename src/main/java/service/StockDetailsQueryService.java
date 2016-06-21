@@ -74,8 +74,8 @@ public class StockDetailsQueryService {
 	 */
 	public void queryBySymbol(final String querySymbol) {
 		Query<StockDetails> query1 = endsWith(StockDetails.SYMBOL, querySymbol);
-		for (StockDetails car : stocks.retrieve(query1)) {
-			System.out.println(car);
+		for (StockDetails stockDetails : stocks.retrieve(query1)) {
+			System.out.println(stockDetails);
 		}
 	}
 	
@@ -89,8 +89,8 @@ public class StockDetailsQueryService {
 	public List<StockDetails> queryBySymbolOrExchange(final String querySymbol,final String exchange) {
 		Query<StockDetails> query1 = or(endsWith(StockDetails.SYMBOL, querySymbol),endsWith(StockDetails.EXCHANGE, exchange));
 		List<StockDetails> results = new ArrayList<StockDetails>();
-		for (StockDetails car : stocks.retrieve(query1)) {
-			results.add(car);
+		for (StockDetails stockDetails : stocks.retrieve(query1)) {
+			results.add(stockDetails);
 		}
 		return results;
 	}

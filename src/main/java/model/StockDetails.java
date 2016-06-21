@@ -50,6 +50,7 @@ public class StockDetails implements Serializable{
 
 	public void setLastPrice(float lastPrice) {
 		this.lastPrice = lastPrice;
+		
 	}
 
 	public float getChange() {

@@ -28,11 +28,11 @@ public class StockDetailsQueryServiceTest {
 		StockDetailsQueryService queryService = new StockDetailsQueryService(allStocks);
 		queryService.queryBySymbol("goog");
 		
-		List<StockDetails> results = queryService.queryBySymbolOrExchange("appl", "NYSE");
+		List<StockDetails> results = queryService.queryBySymbolOrExchange("goog", "NYSE");
 		Assert.assertNotNull(results);
 		Assert.assertTrue(results.size() > 0);
 		results.forEach(stock-> {
-			Assert.assertTrue("Checking for symbold for 'appl' or exchange 'NYSE'" + stock ,stock.getSymbol().endsWith("appl") || stock.getExchange().endsWith("NYSE"));
+			Assert.assertTrue("Checking for symbold for 'appl' or exchange 'NYSE'" + stock ,stock.getSymbol().endsWith("goog") || stock.getExchange().endsWith("NYSE"));
 		});
 		
 	}
