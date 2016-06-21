@@ -1,5 +1,5 @@
 # mapDB
-Example of mapDB , JSoup, CQEngine and JavaFX.
+Example of mapDB , JSoup, CQEngine, JetBrains xodus and JavaFX.
 
 It takes stock values from https://www.google.com/finance and stores into mapDB file database.
 
