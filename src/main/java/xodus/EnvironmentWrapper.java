@@ -15,9 +15,16 @@
  */
 package xodus;
 
+import org.apache.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
+
 import jetbrains.exodus.env.Environment;
 import jetbrains.exodus.env.EnvironmentConfig;
 import jetbrains.exodus.env.Environments;
+import jetbrains.exodus.env.Store;
+import jetbrains.exodus.env.StoreConfig;
+import jetbrains.exodus.env.Transaction;
+import jetbrains.exodus.env.TransactionalComputable;
 
 /**
  * @author debmalyajash
@@ -25,21 +32,88 @@ import jetbrains.exodus.env.Environments;
  */
 public class EnvironmentWrapper {
 	/**
+	 * To log messages.
+	 */
+	private static final Logger LOGGER = Logger.getLogger(EnvironmentWrapper.class);
+	/**
 	 * opens existing database or creates the new one in the directory passed as
 	 * a parameter. Each environment should have different directories. All
 	 * environment data will be stored in ./src/resource/.myAppData This will
 	 * open environment with default configuration.
 	 */
-	private Environment env = Environments.newInstance("./src/resource/.myAppData");
+	private Environment env;
 
+	private static final Object Lock = new Object();
 	/**
 	 * 
 	 */
-	private Environment envWithoutGC = Environments.newInstance("./src/test/resource/.myAppDataWithoutGC",
-			new EnvironmentConfig().setGcEnabled(false));
+	private Environment envWithoutGC;
 
 	public Environment getEnv() {
 		return env;
 	}
 
+	/**
+	 * A transactional closure is used as the simplest way to manage
+	 * transactions and updates within a transaction.Once you get a Store
+	 * object, you can put values by keys in it and get values by keys from it.
+	 * On the Environment layer, all data is binary and untyped, and it is
+	 * represented by ByteIterable instances. ByteIterable is a kind of byte
+	 * array or Iterable<Byte>. Prepare the data and proceed with a closure to
+	 * put it into the store:
+	 * 
+	 * @param storeName
+	 *            name of the store where key value pairs will be kept.
+	 * @return newly created store.
+	 */
+	public Store createStore(final String storeName) {
+		final Store store = env.computeInTransaction(new TransactionalComputable<Store>() {
+			@Override
+			public Store compute(@NotNull final Transaction txn) {
+				return env.openStore(storeName, StoreConfig.WITHOUT_DUPLICATES, txn);
+			}
+		});
+		return store;
+	}
+
+	/**
+	 * Default constructor
+	 * @throws Exception if any exception occurs while creating environment instances.
+	 */
+	public EnvironmentWrapper() throws Exception {
+		try {
+			synchronized (Lock) {
+				if (env == null) {
+					env = Environments.newInstance("./src/test/resource/environment1/.myAppData");
+					LOGGER.debug("Default environment initialized.");
+				}
+				if (envWithoutGC == null) {
+					envWithoutGC = Environments.newInstance("./src/test/resource/environment2/.myAppDataWithoutGC",
+							new EnvironmentConfig().setGcEnabled(false));
+					LOGGER.debug("Environment without garbage collection initialized.");
+				}
+			}
+		} catch (Throwable th) {
+			LOGGER.error(th.getMessage(), th);
+			throw new Exception(th.getMessage(), th);
+		}
+	}
+	
+	/**
+	 * 
+	 * @throws Exception
+	 */
+	public void closeEnvrionment() throws Exception {
+		try {
+			env.close();
+			envWithoutGC.close();
+			
+			env = null;
+			envWithoutGC = null;
+			
+		}catch(Throwable th) {
+			LOGGER.error(th.getMessage(),th);
+			throw new Exception(th);
+		}
+	}
 }

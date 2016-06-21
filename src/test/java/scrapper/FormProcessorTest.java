@@ -37,6 +37,8 @@ public class FormProcessorTest {
 		FormProcessor processor = new FormProcessor();
 		try {
 			processor.process(new URL("https://www.sec.gov/Archives/edgar/data/1288776/000165204416000012/goog10-k2015.htm"));
+			LOGGER.debug("-------------------------------------------------------------------------------------------------");
+			processor.process(new URL("https://www.sec.gov/Archives/edgar/data/789019/000119312515272806/d918813d10k.htm"));
 		} catch (IOException e) {
 			LOGGER.error(e.getMessage(),e);
 		}

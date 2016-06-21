@@ -44,7 +44,7 @@ public class FormProcessor {
 		for (Element eachLink : links) {
 			String linkText = eachLink.text().trim();
 			if (linkText.length() > 0 && !linkText.equalsIgnoreCase(TABLE_OF_CONTENTS))
-			logger.debug(eachLink.id()+" "+eachLink.text());
+			logger.debug(eachLink.html()+" "+eachLink.text());
 		}
 	}
 }
