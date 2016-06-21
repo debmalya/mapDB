@@ -35,6 +35,10 @@ public class EnvironmentWrapperTest {
 	/**
 	 * 
 	 */
+	private static final String GOOGLE = "Google";
+	/**
+	 * 
+	 */
 	private static final String GOOGLE_STOCK_SYMBOL = "goog";
 	private static final Logger LOGGER = Logger.getLogger(EnvironmentWrapperTest.class);
 
@@ -81,11 +85,9 @@ public class EnvironmentWrapperTest {
 			Store myStore = wrapper.createStore("Xodus");
 			Assert.assertNotNull(myStore);
 
-			// Get some stock quotes from yahoo finance
-			YhoStockQuote stockQuote = new YhoStockQuote();
-			List<StockDetails> googleStockList = stockQuote.parse(GOOGLE_STOCK_SYMBOL);
 			
-			final ByteIterable key = StringBinding.stringToEntry(GOOGLE_STOCK_SYMBOL);
+			wrapper.storeKeyValue(GOOGLE, GOOGLE_STOCK_SYMBOL, myStore);
+			
 		} catch (Throwable th) {
 			LOGGER.error(th.getMessage(), th);
 			Assert.assertFalse(th.getMessage(), true);

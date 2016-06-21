@@ -18,6 +18,8 @@ package xodus;
 import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
+import jetbrains.exodus.ByteIterable;
+import jetbrains.exodus.bindings.StringBinding;
 import jetbrains.exodus.env.Environment;
 import jetbrains.exodus.env.EnvironmentConfig;
 import jetbrains.exodus.env.Environments;
@@ -25,6 +27,7 @@ import jetbrains.exodus.env.Store;
 import jetbrains.exodus.env.StoreConfig;
 import jetbrains.exodus.env.Transaction;
 import jetbrains.exodus.env.TransactionalComputable;
+import jetbrains.exodus.env.TransactionalExecutable;
 
 /**
  * @author debmalyajash
@@ -78,7 +81,9 @@ public class EnvironmentWrapper {
 
 	/**
 	 * Default constructor
-	 * @throws Exception if any exception occurs while creating environment instances.
+	 * 
+	 * @throws Exception
+	 *             if any exception occurs while creating environment instances.
 	 */
 	public EnvironmentWrapper() throws Exception {
 		try {
@@ -98,21 +103,53 @@ public class EnvironmentWrapper {
 			throw new Exception(th.getMessage(), th);
 		}
 	}
-	
+
 	/**
+	 * To store key and value both are String.
+	 * 
+	 * @param key
+	 *            to be stored.
+	 * @param value
+	 *            to be stored.
+	 * @return true if stored successfully
+	 * @throws Exception
+	 *             - if any exception occurs during storing.
+	 */
+	public boolean storeKeyValue(final String keyToStore, final String valueToStore, final Store store)
+			throws Exception {
+		try {
+			final ByteIterable key = StringBinding.stringToEntry(keyToStore);
+			final ByteIterable value = StringBinding.stringToEntry(valueToStore);
+
+			env.executeInTransaction(new TransactionalExecutable() {
+				@Override
+				public void execute(@NotNull final Transaction txn) {
+					store.put(txn, key, value);
+				}
+			});
+			return true;
+		} catch (Throwable th) {
+			throw new Exception(th.getMessage(), th);
+		}
+	}
+
+	/**
+	 * Close environment.
 	 * 
 	 * @throws Exception
 	 */
 	public void closeEnvrionment() throws Exception {
 		try {
-			env.close();
-			envWithoutGC.close();
-			
-			env = null;
-			envWithoutGC = null;
-			
-		}catch(Throwable th) {
-			LOGGER.error(th.getMessage(),th);
+			if (env.isOpen()) {
+				env.close();
+			}
+
+			if (envWithoutGC.isOpen()) {
+				envWithoutGC.close();
+			}
+
+		} catch (Throwable th) {
+			LOGGER.error(th.getMessage(), th);
 			throw new Exception(th);
 		}
 	}
