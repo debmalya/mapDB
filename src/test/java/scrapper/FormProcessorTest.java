@@ -19,7 +19,10 @@ import java.io.IOException;
 import java.net.URL;
 
 import org.apache.log4j.Logger;
+import org.junit.Assert;
 import org.junit.Test;
+
+
 
 
 /**
@@ -41,6 +44,7 @@ public class FormProcessorTest {
 			processor.process(new URL("https://www.sec.gov/Archives/edgar/data/789019/000119312515272806/d918813d10k.htm"));
 		} catch (IOException e) {
 			LOGGER.error(e.getMessage(),e);
+			Assert.assertFalse(e.getMessage(),true);
 		}
 	}
 

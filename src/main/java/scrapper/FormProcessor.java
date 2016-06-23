@@ -24,6 +24,8 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import model.SecDocument;
+
 /**
  * Mainly 10K like form processor.
  * 
@@ -36,15 +38,63 @@ public class FormProcessor {
 	 * 
 	 */
 	private static final String TABLE_OF_CONTENTS = "Table of Contents";
-	private static Logger logger = Logger.getLogger(FormProcessor.class);
+	private static final Logger LOGGER = Logger.getLogger(FormProcessor.class);
 
 	public void process(final URL url) throws IOException {
 		Document doc = Jsoup.connect(url.toString()).get();
+		SecDocument secDocument = new SecDocument();
+		setHeader(doc,secDocument);
+		setPart(doc,secDocument);
+	}
+
+	/**
+	 * @param doc
+	 * @param secDocument
+	 */
+	private void setPart(Document doc, SecDocument secDocument) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/**
+	 * @param doc
+	 * @return
+	 */
+	private void setHeader(Document doc,SecDocument secDocument) {
+		
+		secDocument.setDescription( doc.select("title").text());
+		
+		Elements descriptionElements = doc.select("div");
+		int count = 1;
+		for (Element eachDescriptionElement : descriptionElements){
+			LOGGER.debug(count + " " + eachDescriptionElement.text());
+			count++;
+		}
+		
+	}
+
+	/**
+	 * Process all the links of the document.
+	 * @param doc
+	 * @throws IOException
+	 */
+	private void processLinks(final Document doc) throws IOException {
 		Elements links = doc.select("a");
 		for (Element eachLink : links) {
 			String linkText = eachLink.text().trim();
 			if (linkText.length() > 0 && !linkText.equalsIgnoreCase(TABLE_OF_CONTENTS))
-			logger.debug(eachLink.html()+" "+eachLink.text());
+			LOGGER.debug(eachLink.text());
+		}
+	}
+	
+	/**
+	 * Processes all the font from the document.
+	 * @param doc document to be processed.
+	 */
+	public void processFonts(Document doc){
+		Elements fontList = doc.select("font");
+		for (Element eachELement: fontList){
+			LOGGER.debug(eachELement.text());
 		}
 	}
 }
