@@ -43,38 +43,48 @@ public class FormProcessor {
 	public void process(final URL url) throws IOException {
 		Document doc = Jsoup.connect(url.toString()).get();
 		SecDocument secDocument = new SecDocument();
-		setHeader(doc,secDocument);
-		setPart(doc,secDocument);
+		setHeader(doc, secDocument);
+		setPart(doc, secDocument);
 	}
 
+	/**
+	 * 
+	 * @param url
+	 * @return
+	 * @throws IOException
+	 */
+	public String processHTML(final URL url) throws IOException {
+		return Jsoup.connect(url.toString()).get().text();
+	}
 	/**
 	 * @param doc
 	 * @param secDocument
 	 */
 	private void setPart(Document doc, SecDocument secDocument) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	/**
 	 * @param doc
 	 * @return
 	 */
-	private void setHeader(Document doc,SecDocument secDocument) {
-		
-		secDocument.setDescription( doc.select("title").text());
-		
+	private void setHeader(Document doc, SecDocument secDocument) {
+
+		secDocument.setDescription(doc.select("title").text());
+
 		Elements descriptionElements = doc.select("div");
 		int count = 1;
-		for (Element eachDescriptionElement : descriptionElements){
+		for (Element eachDescriptionElement : descriptionElements) {
 			LOGGER.debug(count + " " + eachDescriptionElement.text());
 			count++;
 		}
-		
+
 	}
 
 	/**
 	 * Process all the links of the document.
+	 * 
 	 * @param doc
 	 * @throws IOException
 	 */
@@ -83,18 +93,23 @@ public class FormProcessor {
 		for (Element eachLink : links) {
 			String linkText = eachLink.text().trim();
 			if (linkText.length() > 0 && !linkText.equalsIgnoreCase(TABLE_OF_CONTENTS))
-			LOGGER.debug(eachLink.text());
+				LOGGER.debug(eachLink.text());
 		}
 	}
-	
+
 	/**
 	 * Processes all the font from the document.
-	 * @param doc document to be processed.
+	 * 
+	 * @param doc
+	 *            document to be processed.
 	 */
-	public void processFonts(Document doc){
+	public void processFonts(Document doc) {
 		Elements fontList = doc.select("font");
-		for (Element eachELement: fontList){
-			LOGGER.debug(eachELement.text());
+		for (Element eachELement : fontList) {
+			String txt = eachELement.text();
+			if (txt.contains("ITEM")) {
+				LOGGER.debug(eachELement.text());
+			}
 		}
 	}
 }
