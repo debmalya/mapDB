@@ -10,6 +10,10 @@ public class StockDetails implements Serializable{
 	/**
 	 * 
 	 */
+	private static final String COMMA = ",";
+	/**
+	 * 
+	 */
 	private static final long serialVersionUID = -2031420822267600090L;
 	private String exchange;
 	private String symbol;
@@ -114,6 +118,58 @@ public class StockDetails implements Serializable{
 				+ "]";
 	}
 
+	/**
+	 * To get the CSV header.
+	 * @return CSV header.
+	 */
+	public static String getCSVHeader() {
+		StringBuilder csvHeader = new StringBuilder();
+		csvHeader.append("exchange");
+		csvHeader.append(COMMA);
+		csvHeader.append("symbol");
+		csvHeader.append(COMMA);
+		csvHeader.append("currentPrice");
+		csvHeader.append(COMMA);
+		csvHeader.append("lastPrice");
+		csvHeader.append(COMMA);
+		csvHeader.append("currentPrice");
+		csvHeader.append(COMMA);
+		csvHeader.append("change");
+		csvHeader.append(COMMA);
+		csvHeader.append("marketCapital");
+		csvHeader.append(COMMA);
+		csvHeader.append("lastPriceRecordTime");
+		csvHeader.append(COMMA);
+		csvHeader.append("currentPriceRecordTime");
+		
+		return csvHeader.toString();
+	}
+	
+	/**
+	 * To return result in CSV format.
+	 * @return return in CSV format.
+	 */
+	public String toCSV(){
+		StringBuilder csvBuilder = new StringBuilder();
+		csvBuilder.append(exchange);
+		csvBuilder.append(COMMA);
+		csvBuilder.append(symbol);
+		csvBuilder.append(COMMA);
+		csvBuilder.append(currentPrice);
+		csvBuilder.append(COMMA);
+		csvBuilder.append(lastPrice);
+		csvBuilder.append(COMMA);
+		csvBuilder.append(change);
+		csvBuilder.append(COMMA);
+		csvBuilder.append(marketCapital);
+		csvBuilder.append(COMMA);
+		csvBuilder.append(lastPriceRecordTime);
+		csvBuilder.append(COMMA);
+		csvBuilder.append(currentPriceRecordTime);
+		return csvBuilder.toString();
+	}
+	
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;

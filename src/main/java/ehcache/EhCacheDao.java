@@ -4,8 +4,6 @@
  */
 package ehcache;
 
-import javax.json.JsonObject;
-
 import org.ehcache.Cache;
 import org.ehcache.CacheManager;
 import org.ehcache.config.builders.CacheConfigurationBuilder;
