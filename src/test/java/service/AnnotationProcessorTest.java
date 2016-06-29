@@ -13,40 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package scrapper;
+package service;
 
 import java.io.IOException;
 import java.net.URL;
 
-import org.apache.log4j.Logger;
 import org.junit.Assert;
 import org.junit.Test;
 
+import scrapper.FormProcessor;
 import util.CommonTestUtil;
-
-
-
 
 /**
  * @author debmalyajash
  *
  */
-public class FormProcessorTest {
-	
-	private static Logger LOGGER = Logger.getLogger(FormProcessorTest.class);
+public class AnnotationProcessorTest {
 
 	/**
-	 * Test method for {@link scrapper.FormProcessor#process(java.lang.String)}.
+	 * Test method for {@link service.AnnotationProcessor#annotate(java.lang.String, java.lang.String)}.
 	 */
 	@Test
-	public void testProcess() {
-		FormProcessor processor = new FormProcessor();
+	public void testAnnotate() {
+		FormProcessor process = new FormProcessor();
 		try {
-			processor.process(new URL(CommonTestUtil.GOOGLE_10K_URL));
-			LOGGER.debug("-------------------------------------------------------------------------------------------------");
-			processor.process(new URL("https://www.sec.gov/Archives/edgar/data/789019/000119312515272806/d918813d10k.htm"));
+			process.process(new URL(CommonTestUtil.GOOGLE_10K_URL));
+			AnnotationProcessor.annotate(process.getParsedString(), "parsed.xml");
 		} catch (IOException e) {
-			LOGGER.error(e.getMessage(),e);
+			e.printStackTrace();
 			Assert.assertFalse(e.getMessage(),true);
 		}
 	}

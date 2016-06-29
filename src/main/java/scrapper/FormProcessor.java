@@ -33,6 +33,8 @@ import model.SecDocument;
  *
  */
 public class FormProcessor {
+	
+	private String parsedString;
 
 	/**
 	 * 
@@ -74,12 +76,15 @@ public class FormProcessor {
 		secDocument.setDescription(doc.select("title").text());
 
 		Elements descriptionElements = doc.select("div");
+		StringBuilder sb = new StringBuilder();
+		
 		int count = 1;
 		for (Element eachDescriptionElement : descriptionElements) {
 			LOGGER.debug(count + " " + eachDescriptionElement.text());
+			sb.append(eachDescriptionElement.text());
 			count++;
 		}
-
+		setParsedString(sb.toString());
 	}
 
 	/**
@@ -111,5 +116,19 @@ public class FormProcessor {
 				LOGGER.debug(eachELement.text());
 			}
 		}
+	}
+
+	/**
+	 * @return the parsedString
+	 */
+	public String getParsedString() {
+		return parsedString;
+	}
+
+	/**
+	 * @param parsedString the parsedString to set
+	 */
+	private void setParsedString(String parsedString) {
+		this.parsedString = parsedString;
 	}
 }
