@@ -38,7 +38,7 @@ public class AnnotationProcessorTest {
 		FormProcessor process = new FormProcessor();
 		try {
 			process.process(new URL(CommonTestUtil.GOOGLE_10K_URL));
-			AnnotationProcessor.annotate(process.getParsedString(), "parsed.xml");
+//			AnnotationProcessor.annotate(process.getParsedString(), "parsed.xml");
 		} catch (IOException e) {
 			e.printStackTrace();
 			Assert.assertFalse(e.getMessage(),true);
