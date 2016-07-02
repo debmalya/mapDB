@@ -3,6 +3,7 @@ package service;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Stream;
 
 import model.StockSymbol;
 import scrapper.GoogleFinance;
@@ -24,6 +25,11 @@ public class StockService {
 		return stockSymbols;
 	}
 	
+	
+	public Stream<StockSymbol> select(final String stockSymbol) {
+		stockSymbols = new GoogleFinance().parseData();
+		return stockSymbols.stream().filter(stock -> stock.getSymbol().equalsIgnoreCase(stockSymbol));
+	}
 	
 
 }
