@@ -2,11 +2,15 @@ package model;
 
 import java.io.Serializable;
 
+import org.apache.log4j.Logger;
+
 import com.googlecode.cqengine.attribute.Attribute;
 import com.googlecode.cqengine.attribute.SimpleAttribute;
 import com.googlecode.cqengine.query.option.QueryOptions;
 
 public class StockDetails implements Serializable{
+	
+	private static final Logger LOGGER = Logger.getLogger(StockDetails.class);
 	/**
 	 * 
 	 */
@@ -23,6 +27,8 @@ public class StockDetails implements Serializable{
 	private String marketCapital;
 	private String lastPriceRecordTime;
 	private String currentPriceRecordTime;
+	private float previousClose;
+	private float open;
 
 	public String getExchange() {
 		return exchange;
@@ -115,6 +121,8 @@ public class StockDetails implements Serializable{
 		return "StockDetails [exchange=" + exchange + ", symbol=" + symbol + ", currentPrice=" + currentPrice
 				+ ", lastPrice=" + lastPrice + ", change=" + change + ", marketCapital=" + marketCapital
 				+ ", lastPriceRecordTime=" + lastPriceRecordTime + ", currentPriceRecordTime=" + currentPriceRecordTime
+				+ ", previous close = " + previousClose
+				+ ", opening price  = " + open
 				+ "]";
 	}
 
@@ -166,6 +174,9 @@ public class StockDetails implements Serializable{
 		csvBuilder.append(lastPriceRecordTime);
 		csvBuilder.append(COMMA);
 		csvBuilder.append(currentPriceRecordTime);
+		csvBuilder.append(COMMA);
+		csvBuilder.append(previousClose);
+		
 		return csvBuilder.toString();
 	}
 	
@@ -193,6 +204,35 @@ public class StockDetails implements Serializable{
 		} else if (!currentPriceRecordTime.equals(other.currentPriceRecordTime))
 			return false;
 		return true;
+	}
+
+	/**
+	 * @param text
+	 */
+	public void setPrevClose(String text) {
+		previousClose = convertToFloat(text);		
+	}
+
+	/**
+	 * @param text
+	 * @return
+	 */
+	private float convertToFloat(final String text) {
+		float value = 0.00f;
+		try {
+			value = Float.parseFloat(text);
+		}catch(NumberFormatException ignore){
+			LOGGER.trace(text + " not converted " + ignore.getMessage(), ignore);
+		}
+		return value;
+	}
+
+	/**
+	 * @param text
+	 */
+	public void setOpen(String text) {
+		open = convertToFloat(text);
+		
 	}
 	
 

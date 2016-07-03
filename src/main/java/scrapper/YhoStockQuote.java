@@ -47,7 +47,7 @@ public class YhoStockQuote {
 					lastTime.append(" ");
 				}
 			} else {
-				for (int i = 0; i < time.length ; i++) {
+				for (int i = 0; i < time.length; i++) {
 					currentTime.append(time[i]);
 					currentTime.append(" ");
 				}
@@ -57,24 +57,53 @@ public class YhoStockQuote {
 			float lastPrice = 0.00f;
 			try {
 				lastPrice = Float.parseFloat(clossingPrice);
-				
+
 			} catch (NumberFormatException nfe) {
 				LOGGER.error(nfe.getMessage());
 			}
 
 			float change = 0.00f;
-			if (currentPrice != 0.00f && lastPrice != 0.00f){
+			if (currentPrice != 0.00f && lastPrice != 0.00f) {
 				change = currentPrice - lastPrice;
 			}
 
 			StockDetails stockDetails = new StockDetails(stockExchange, symbol, currentPrice, lastPrice, change, "",
 					lastTime.toString(), currentTime.toString());
+			getSummaryData(doc, stockDetails);
+
+			LOGGER.debug(stockDetails);
 			stockDetalsList.add(stockDetails);
+
 		} catch (IOException e) {
 			LOGGER.error(e.getMessage(), e);
 			throw new Exception(e);
 		}
 		return stockDetalsList;
+
+	}
+
+	/**
+	 * @param doc
+	 * @param stockDetails
+	 */
+	private void getSummaryData(Element doc, StockDetails stockDetails) {
+		Elements summaryElement = doc.select("#yfi_quote_summary_data");
+		Elements allSummaries = summaryElement.select(".yfnc_tabledata1");
+		int count = 0;
+		for (Element each : allSummaries) {
+			String text = each.text();
+			switch (count) {
+			case 0:
+				stockDetails.setPrevClose(text);
+				break;
+			case 1:
+				stockDetails.setOpen(text);
+				break;
+			default:
+				break;
+			}
+			count++;
+		}
 
 	}
 
