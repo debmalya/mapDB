@@ -2,6 +2,7 @@ package model;
 
 import java.io.Serializable;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.log4j.Logger;
 
 import com.googlecode.cqengine.attribute.Attribute;
@@ -118,12 +119,13 @@ public class StockDetails implements Serializable{
 
 	@Override
 	public String toString() {
-		return "StockDetails [exchange=" + exchange + ", symbol=" + symbol + ", currentPrice=" + currentPrice
-				+ ", lastPrice=" + lastPrice + ", change=" + change + ", marketCapital=" + marketCapital
-				+ ", lastPriceRecordTime=" + lastPriceRecordTime + ", currentPriceRecordTime=" + currentPriceRecordTime
-				+ ", previous close = " + previousClose
-				+ ", opening price  = " + open
-				+ "]";
+//		return "StockDetails [exchange=" + exchange + ", symbol=" + symbol + ", currentPrice=" + currentPrice
+//				+ ", lastPrice=" + lastPrice + ", change=" + change + ", marketCapital=" + marketCapital
+//				+ ", lastPriceRecordTime=" + lastPriceRecordTime + ", currentPriceRecordTime=" + currentPriceRecordTime
+//				+ ", previous close = " + previousClose
+//				+ ", opening price  = " + open
+//				+ "]";
+		return ToStringBuilder.reflectionToString(this);
 	}
 
 	/**
