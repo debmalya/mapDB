@@ -15,11 +15,9 @@
  */
 package scrapper;
 
-import java.io.IOException;
-
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
 /**
  * @author debmalyajash
@@ -27,12 +25,62 @@ import org.jsoup.select.Elements;
  */
 public class BSEScrapper {
 	
-	public void parse(String url) throws IOException {
+	/**
+	 * URL to retrieve BSE stock index value.
+	 */
+	public static final String URL = "https://www.google.com/finance?q=INDEXBOM%3ASENSEX&ei=x_t8V-nFFZbZuATb2oCwCw";
+
+
+	private String sensexValue;
+	
+	private String change;
+
+	public void parse(String url) throws Exception {
 		Element doc = Jsoup.connect(url).get();
-		Elements elements = doc.select(".neweqindentmenu");
-		for (Element element: elements){
-			System.out.println(element);
-		}
+		setSensexValue(doc.select("#ref_15173681_l").text());
+		setChange(doc.select("#ref_15173681_c").text());
+
+	}
+
+	/**
+	 * @return the sensexValue
+	 */
+	public String getSensexValue() {
+		return sensexValue;
+	}
+
+	/**
+	 * @param sensexValue
+	 *            the sensexValue to set
+	 */
+	private void setSensexValue(String sensexValue) {
+		this.sensexValue = sensexValue;
+	}
+
+	/**
+	 * @return the change
+	 */
+	public String getChange() {
+		return change;
+	}
+
+	
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this);
+	}
+
+	/**
+	 * @param change the change to set
+	 */
+	private void setChange(String change) {
+		this.change = change;
+	}
+	
+	public static void main(String... args) throws Exception {
+		BSEScrapper scrapper = new BSEScrapper();
+		scrapper.parse(URL);
+		System.out.println(scrapper);
 	}
 
 }

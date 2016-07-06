@@ -15,8 +15,6 @@
  */
 package scrapper;
 
-import java.io.IOException;
-
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -27,6 +25,7 @@ import org.junit.Test;
  */
 public class BSEScrapperTest {
 
+	
 	/**
 	 * Test method for {@link scrapper.BSEScrapper#parse(java.lang.String)}.
 	 */
@@ -34,8 +33,12 @@ public class BSEScrapperTest {
 	public void testParse() {
 		BSEScrapper bseScrapper = new BSEScrapper();
 		try {
-			bseScrapper.parse("http://www.bseindia.com/");
-		} catch (IOException e) {
+			bseScrapper.parse(BSEScrapper.URL);
+			Assert.assertNotNull(bseScrapper.getSensexValue());
+			System.out.println(bseScrapper.getSensexValue());
+			System.out.println(bseScrapper.getChange());
+			
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			Assert.assertFalse(e.getMessage(),true);
