@@ -34,11 +34,14 @@ public class BSEScrapper {
 	private String sensexValue;
 	
 	private String change;
+	
+	private String changePercentage;
 
 	public void parse(String url) throws Exception {
 		Element doc = Jsoup.connect(url).get();
 		setSensexValue(doc.select("#ref_15173681_l").text());
 		setChange(doc.select("#ref_15173681_c").text());
+		setChangePercentage(doc.select("#ref_15173681_cp").text());
 
 	}
 
@@ -81,6 +84,20 @@ public class BSEScrapper {
 		BSEScrapper scrapper = new BSEScrapper();
 		scrapper.parse(URL);
 		System.out.println(scrapper);
+	}
+
+	/**
+	 * @return the changePercentage
+	 */
+	public String getChangePercentage() {
+		return changePercentage;
+	}
+
+	/**
+	 * @param changePercentage the changePercentage to set
+	 */
+	private void setChangePercentage(String changePercentage) {
+		this.changePercentage = changePercentage;
 	}
 
 }

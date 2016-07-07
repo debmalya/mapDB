@@ -35,9 +35,7 @@ public class BSEScrapperTest {
 		try {
 			bseScrapper.parse(BSEScrapper.URL);
 			Assert.assertNotNull(bseScrapper.getSensexValue());
-			System.out.println(bseScrapper.getSensexValue());
-			System.out.println(bseScrapper.getChange());
-			
+			System.out.println(bseScrapper);			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
