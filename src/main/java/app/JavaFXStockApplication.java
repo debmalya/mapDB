@@ -105,7 +105,7 @@ public class JavaFXStockApplication extends Application {
 
 		// and then you run it like this:
 		Thread hilo = new Thread(myUpdatingTask);
-		hilo.setDaemon(true);
+//		hilo.setDaemon(true);
 		hilo.start();
 	}
 }
