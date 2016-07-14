@@ -18,6 +18,8 @@ package scrapper.sgx;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;
@@ -29,6 +31,12 @@ import org.jsoup.select.Elements;
  *
  */
 public class SGXScrapper {
+	
+	private static Map<String,String> companySymbol = new HashMap<>();
+	
+	static {
+		companySymbol.put("BreadTalk Group Ltd", "5DA.SI");
+	}
 
 	/**
 	 * 
@@ -36,6 +44,8 @@ public class SGXScrapper {
 	private static final int PREFERRED_WIDTH = 35;
 
 	private static final String FOOL = "http://www.sgx.com";
+	
+	private static final String YAHOO_FINANCE = "https://sg.finance.yahoo.com/q/hp?s=";
 
 	private static final Logger LOGGER = Logger.getLogger(SGXScrapper.class);
 
@@ -50,7 +60,7 @@ public class SGXScrapper {
 	private static void fooled() throws IOException {
 		Element doc = Jsoup.connect(FOOL).get();
 		if (LOGGER.isDebugEnabled()) {
-			debugLog(doc.text(), 80);
+			debugLog(doc.text(), 80,"sgx.txt");
 		}
 		Elements links = doc.select("a[href]");
 		Elements media = doc.select("[src]");
@@ -58,7 +68,13 @@ public class SGXScrapper {
 
 		print("\nLinks: (%d)", links.size());
 		for (Element link : links) {
-			print(" * a: <%s>  (%s)", link.attr("abs:href"), trim(link.text(), 35));
+//			print(" * a: <%s>  (%s)", link.attr("abs:href"), trim(link.text(), 35));
+			if (link.text().equalsIgnoreCase("Gainers")){
+				Element subDoc = Jsoup.connect(link.attr("abs:href")).get();
+				System.out.println(link.attr("abs:href"));
+				debugLog(subDoc.text(), 80,"sgx_gainers.txt");
+			}
+//			print(" * a: <%s>  (%s)", link.attr("abs:href"), link.text());
 		}
 
 	}
@@ -68,12 +84,12 @@ public class SGXScrapper {
 	 * @param preferredWidth
 	 * @throws FileNotFoundException
 	 */
-	private static void debugLog(String text, int preferredWidth) throws FileNotFoundException {
+	private static void debugLog(String text, int preferredWidth,String fileName) throws FileNotFoundException {
 		PrintWriter sgxWriter = null;
 		try {
 			String[] allWords = text.split(" ");
 			StringBuilder sb = new StringBuilder();
-			sgxWriter = new PrintWriter("sgx.txt");
+			sgxWriter = new PrintWriter(fileName);
 			int currentLength = 0;
 			for (int i = 0; i < allWords.length; i++) {
 				if (currentLength + allWords[i].length() < preferredWidth) {
