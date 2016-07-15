@@ -28,14 +28,34 @@ import org.jsoup.select.Elements;
 
 /**
  * @author debmalyajash
- *
+ * 
  */
 public class SGXScrapper {
 	
 	private static Map<String,String> companySymbol = new HashMap<>();
 	
+	private static Map<String,String> stockSites = new HashMap<>();
+	
 	static {
 		companySymbol.put("BreadTalk Group Ltd", "5DA.SI");
+		companySymbol.put("SingTel", "Z74");
+		companySymbol.put("SingTel 100", "Z78");
+		companySymbol.put("SingTel 10", "Z77");
+		companySymbol.put("SIA", "Z77");
+		companySymbol.put("SIA", "Z77");
+		
+		
+		stockSites.put("Australia", "www.asx.com.au");
+		stockSites.put("Japan", "www.tse.or.jp");
+		stockSites.put("Singapore", "www.sgx.com");
+		stockSites.put("Hongkong", "www.hkex.com.hk");
+		stockSites.put("France", "www.euronext.com");
+		stockSites.put("Switzerland", "www.swxeurope.com");
+		stockSites.put("Germany", "www.deutsche-boerse.com");
+		stockSites.put("London", "www.londonstockexchange.com");
+		stockSites.put("Newyork Stock Exchange", "www.nyse.com");
+		stockSites.put("Nasdaq", "www.nasdaq.com");
+		stockSites.put("Nasdaq", "www.nasdaq.com");
 	}
 
 	/**

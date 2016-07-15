@@ -93,7 +93,11 @@ public class WeatherByCityCountry {
 		JSONObject wind = weatherData.getJSONObject("wind");
 		JSONObject main = weatherData.getJSONObject("main");
 
+		String dt = weatherData.get("dt").toString() ;
+		Date date = new Date(Long.valueOf(dt));
+		System.out.println(date+ " " + Long.valueOf(dt) + " " + dt);
 		System.out.println(FlipTable.of(new String[] { "Name", "Value" },
+				
 				new String[][] { new String[] { "Date", weatherData.get("dt").toString() },
 						new String[] { "Longitude",  coordinates.get("lon").toString() },
 						new String[] { "Latitude",  String.valueOf(coordinates.get("lat")) },
