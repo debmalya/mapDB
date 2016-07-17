@@ -44,29 +44,29 @@ public class WeatherByCityCountry {
 	public static void main(String[] args) throws MalformedURLException, IOException {
 		Properties properties = new Properties();
 		properties.load(ClassLoader.getSystemResource("config.properties").openStream());
-
+		String appId = properties.getProperty("openweathermap.apikey");
 		if (args.length != 2) {
 
-			getWeatherDataByCityNCountry(properties, "London", "uk");
+			getWeatherDataByCityNCountry(appId, "London", "uk");
 
 		} else {
-			getWeatherDataByCityNCountry(properties, args[0], args[1]);
+			getWeatherDataByCityNCountry(appId, args[0], args[1]);
 		}
 
 	}
 
 	/**
 	 * 
-	 * @param properties
+	 * @param appId2
 	 * @param city
 	 * @param country
 	 * @throws IOException
 	 * @throws MalformedURLException
 	 * @throws JSONException
 	 */
-	private static void getWeatherDataByCityNCountry(Properties properties, String city, String country)
+	private static void getWeatherDataByCityNCountry(String appId, String city, String country)
 			throws IOException, MalformedURLException, JSONException {
-		String appId = properties.getProperty("openweathermap.apikey");
+		
 		String url = "http://api.openweathermap.org/data/2.5/weather?q=" + city + "," + country + "&APPID=" + appId;
 		String json = IOUtils.toString(new URL(url).openStream());
 		JSONObject weatherData = new JSONObject(json);
