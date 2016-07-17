@@ -83,14 +83,14 @@ public class SGXScrapper {
 
 	public SGXScrapper() {
 		try {
-			String pathname =  "sgx_yahoo.csv";
+			String pathname = "sgx_yahoo.csv";
 			boolean existing = false;
-			
-				File stockFile = new File(pathname);
-				if (stockFile.exists()) {
-					existing = true;
-				}
-			
+
+			File stockFile = new File(pathname);
+			if (stockFile.exists()) {
+				existing = true;
+			}
+
 			FileWriter file = new FileWriter(pathname, true);
 
 			stockWriter = new CSVWriter(new PrintWriter(file));
@@ -139,12 +139,11 @@ public class SGXScrapper {
 			parseTable(doc, "table1", details);
 			parseTable(doc, "table2", details);
 
-			System.out.println("----------------------------" + symbol);
-
 			if (stockWriter != null) {
 				stockWriter.writeNext(details.toCSV().split(","));
 			}
 		} catch (Throwable e) {
+			e.printStackTrace();
 			System.err.println(e.getMessage());
 		} finally {
 
@@ -156,15 +155,16 @@ public class SGXScrapper {
 			StockDetails details) {
 		Element tableElement = doc.getElementById(tableid);
 
-		tableElement.select("tr").iterator()
-				.forEachRemaining(s -> processEachTableRow(s, details));
+		if (tableElement != null) {
+			tableElement.select("tr").iterator()
+					.forEachRemaining(s -> processEachTableRow(s, details));
+		}
 
 	}
 
 	public static void processEachTableRow(Element s, StockDetails details) {
 		String key = s.select("th").text().trim();
-		String value = s.select("td").text().trim().replace(","," ");
-//		System.out.println(key);
+		String value = s.select("td").text().trim().replace(",", " ");
 		switch (key) {
 		case "Prev Close:":
 			try {
@@ -242,6 +242,18 @@ public class SGXScrapper {
 			break;
 		case "Underlying:":
 			details.setUnderlying(value);
+			break;
+		case "Yield (ttm):":
+			details.setYieldTTM(value);
+			break;
+		case "NAV:":
+			details.setNav(value);
+			break;
+		case "Net Assets:":
+			details.setNetAssets(value);
+			break;
+		case "YTD Return (Mkt):":
+			details.setYtdReturnMkt(value);
 			break;
 		default:
 			if (key.contains("Avg Vol")) {

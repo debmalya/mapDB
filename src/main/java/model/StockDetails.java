@@ -50,6 +50,10 @@ public class StockDetails implements Serializable {
 	private String share;
 	private String issuer;
 	private String underlying;
+	private String yieldTTM;
+	private String nav;
+	private String netAssets;
+	private String ytdReturnMkt;
 
 	/**
 	 * @return the previousClose
@@ -252,6 +256,14 @@ public class StockDetails implements Serializable {
 		csvHeader.append("Issuer");
 		csvHeader.append(COMMA);
 		csvHeader.append("Underlying");
+		csvHeader.append(COMMA);
+		csvHeader.append("Yield (ttm)");
+		csvHeader.append(COMMA);
+		csvHeader.append("NAV");
+		csvHeader.append(COMMA);
+		csvHeader.append("Net Assets");
+		csvHeader.append(COMMA);
+		csvHeader.append("YTD Return (Mkt)");
 
 		return csvHeader.toString();
 	}
@@ -273,9 +285,9 @@ public class StockDetails implements Serializable {
 		csvDetail.append(COMMA);
 		csvDetail.append(change);
 		csvDetail.append(COMMA);
-		csvDetail.append(marketCapital);
+		csvDetail.append(marketCapital != null ? marketCapital : "N/A");
 		csvDetail.append(COMMA);
-		csvDetail.append(lastPriceRecordTime);
+		csvDetail.append(currentPriceRecordTime);
 		csvDetail.append(COMMA);
 		csvDetail.append(previousClose);
 		csvDetail.append(COMMA);
@@ -283,43 +295,51 @@ public class StockDetails implements Serializable {
 		csvDetail.append(COMMA);
 		csvDetail.append(open);
 		csvDetail.append(COMMA);
-		csvDetail.append(oneYrTargetEst);
+		csvDetail.append(oneYrTargetEst != null ? oneYrTargetEst : "N/A");
 		csvDetail.append(COMMA);
-		csvDetail.append(beta);
+		csvDetail.append(beta != null ? beta : "N/A");
 		csvDetail.append(COMMA);
-		csvDetail.append(nextEarningDate);
+		csvDetail.append(nextEarningDate != null ? nextEarningDate : "N/A");
 		csvDetail.append(COMMA);
 		csvDetail.append(ask);
 		csvDetail.append(COMMA);
 		csvDetail.append(daysRange);
 		csvDetail.append(COMMA);
-		csvDetail.append(yrRange);
+		csvDetail.append(yrRange != null ? yrRange : "N/A");
 		csvDetail.append(COMMA);
-		csvDetail.append(volume != null ? volume : "NA");
+		csvDetail.append(volume != null ? volume : "N/A");
 		csvDetail.append(COMMA);
-		csvDetail.append(averageVolume != null ? averageVolume : "NA");
+		csvDetail.append(averageVolume != null ? averageVolume : "N/A");
 		csvDetail.append(COMMA);
-		csvDetail.append(peRatio);
+		csvDetail.append(peRatio != null ? peRatio : "N/A");
 		csvDetail.append(COMMA);
-		csvDetail.append(eps);
+		csvDetail.append(eps != null ? eps : "N/A");
 		csvDetail.append(COMMA);
-		csvDetail.append(divNYield);
+		csvDetail.append(divNYield != null ? divNYield : "N/A");
 		csvDetail.append(COMMA);
-		csvDetail.append(exercisePrice != null ? exercisePrice : "NA");
+		csvDetail.append(exercisePrice != null ? exercisePrice : "N/A");
 		csvDetail.append(COMMA);
-		csvDetail.append(expirationDate != null ? expirationDate : "NA");
+		csvDetail.append(expirationDate != null ? expirationDate : "N/A");
 		csvDetail.append(COMMA);
-		csvDetail.append(expirationPrice != null ? expirationPrice : "NA");
+		csvDetail.append(expirationPrice != null ? expirationPrice : "N/A");
 		csvDetail.append(COMMA);
-		csvDetail.append(type != null ? type : "NA");
+		csvDetail.append(type != null ? type : "N/A");
 		csvDetail.append(COMMA);
-		csvDetail.append(minimumTradeSize != null ? minimumTradeSize : "NA");
+		csvDetail.append(minimumTradeSize != null ? minimumTradeSize : "N/A");
 		csvDetail.append(COMMA);
-		csvDetail.append(share != null ? share : "NA");
+		csvDetail.append(share != null ? share : "N/A");
 		csvDetail.append(COMMA);
-		csvDetail.append(issuer != null ? issuer : "NA");
+		csvDetail.append(issuer != null ? issuer : "N/A");
 		csvDetail.append(COMMA);
-		csvDetail.append(underlying != null ? underlying : "NA");
+		csvDetail.append(underlying != null ? underlying : "N/A");
+		csvDetail.append(COMMA);
+		csvDetail.append(yieldTTM != null ? yieldTTM : "N/A");
+		csvDetail.append(COMMA);
+		csvDetail.append(nav != null ? nav : "N/A");
+		csvDetail.append(COMMA);
+		csvDetail.append(netAssets != null ? netAssets : "N/A");
+		csvDetail.append(COMMA);
+		csvDetail.append(ytdReturnMkt != null ? ytdReturnMkt : "N/A");
 
 		return csvDetail.toString();
 	}
@@ -512,7 +532,7 @@ public class StockDetails implements Serializable {
 		try {
 			previousClose = Float.parseFloat(value);
 		} catch (NumberFormatException nfe) {
-			
+
 		}
 
 	}
@@ -529,7 +549,7 @@ public class StockDetails implements Serializable {
 	 */
 	public void setExpriationPrice(String value) {
 		expirationPrice = value;
-		
+
 	}
 
 	/**
@@ -537,7 +557,7 @@ public class StockDetails implements Serializable {
 	 */
 	public void setType(String value) {
 		type = value;
-		
+
 	}
 
 	/**
@@ -552,14 +572,14 @@ public class StockDetails implements Serializable {
 	 */
 	public void setShare(String value) {
 		share = value;
-		
+
 	}
 
 	/**
 	 * @param value
 	 */
 	public void setIssuer(String value) {
-		issuer = value;	
+		issuer = value;
 	}
 
 	/**
@@ -567,7 +587,38 @@ public class StockDetails implements Serializable {
 	 */
 	public void setUnderlying(String value) {
 		underlying = value;
-		
+
+	}
+
+	/**
+	 * @param value
+	 */
+	public void setYieldTTM(String value) {
+		yieldTTM = value;
+
+	}
+
+	/**
+	 * @param value
+	 */
+	public void setNav(String value) {
+		nav = value;
+
+	}
+
+	/**
+	 * @param value
+	 */
+	public void setNetAssets(String value) {
+		netAssets = value;
+
+	}
+
+	/**
+	 * @param value
+	 */
+	public void setYtdReturnMkt(String value) {
+		ytdReturnMkt = value;
 	}
 
 }
