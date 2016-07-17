@@ -41,16 +41,20 @@ public class WeatherByCityCountry {
 	 * @throws IOException
 	 * @throws MalformedURLException
 	 */
-	public static void main(String[] args) throws MalformedURLException, IOException {
+	public static void main(String[] args) throws MalformedURLException,
+			IOException {
 		Properties properties = new Properties();
-		properties.load(ClassLoader.getSystemResource("config.properties").openStream());
+		properties.load(ClassLoader.getSystemResource("config.properties")
+				.openStream());
 		String appId = properties.getProperty("openweathermap.apikey");
-		if (args.length != 2) {
+		if (args.length == 0) {
 
 			getWeatherDataByCityNCountry(appId, "London", "uk");
 
 		} else {
-			getWeatherDataByCityNCountry(appId, args[0], args[1]);
+			for (int i = 0; i < args.length; i+=2) {
+				getWeatherDataByCityNCountry(appId, args[i], args[i+1]);
+			}
 		}
 
 	}
@@ -64,10 +68,12 @@ public class WeatherByCityCountry {
 	 * @throws MalformedURLException
 	 * @throws JSONException
 	 */
-	private static void getWeatherDataByCityNCountry(String appId, String city, String country)
-			throws IOException, MalformedURLException, JSONException {
-		
-		String url = "http://api.openweathermap.org/data/2.5/weather?q=" + city + "," + country + "&APPID=" + appId;
+	private static void getWeatherDataByCityNCountry(String appId, String city,
+			String country) throws IOException, MalformedURLException,
+			JSONException {
+
+		String url = "http://api.openweathermap.org/data/2.5/weather?q=" + city
+				+ "," + country + "&APPID=" + appId;
 		String json = IOUtils.toString(new URL(url).openStream());
 		JSONObject weatherData = new JSONObject(json);
 		System.out.println(weatherData);
@@ -86,36 +92,84 @@ public class WeatherByCityCountry {
 	 * @param weatherData
 	 * @throws JSONException
 	 */
-	private static void printWeatherData(JSONObject weatherData) throws JSONException {
+	private static void printWeatherData(JSONObject weatherData)
+			throws JSONException {
 		JSONObject coordinates = weatherData.getJSONObject("coord");
 		JSONArray weather = weatherData.getJSONArray("weather");
 		JSONObject sys = weatherData.getJSONObject("sys");
 		JSONObject wind = weatherData.getJSONObject("wind");
 		JSONObject main = weatherData.getJSONObject("main");
 
-		String dt = weatherData.get("dt").toString() ;
+		String dt = weatherData.get("dt").toString();
 		Date date = new Date(Long.valueOf(dt));
-		System.out.println(date+ " " + Long.valueOf(dt) + " " + dt);
-		System.out.println(FlipTable.of(new String[] { "Name", "Value" },
-				
-				new String[][] { new String[] { "Date", weatherData.get("dt").toString() },
-						new String[] { "Longitude",  coordinates.get("lon").toString() },
-						new String[] { "Latitude",  String.valueOf(coordinates.get("lat")) },
-						new String[] { "Description", (String) weather.getJSONObject(0).get("description") },
-						new String[] { "Main", String.valueOf(weather.getJSONObject(0).get("main")) },
-						new String[] { "Name", String.valueOf(weatherData.get("name")) },
-						new String[] { "temp", String.valueOf(main.get("temp")) },
-						new String[] { "temp_min", String.valueOf(main.get("temp_min")) },
-						new String[] { "temp_max", String.valueOf(main.get("temp_max")) },
-//						new String[] { "grnd_level", String.valueOf(main.get("grnd_level")) },
-						new String[] { "humidity", String.valueOf(main.get("humidity")) },
-						new String[] { "pressure", String.valueOf(main.get("pressure")) },
-//						new String[] { "sea_level", String.valueOf(main.get("sea_level")) },
-						new String[] { "Country", String.valueOf(sys.get("country")) },
-						new String[] { "Sunrise", sys.get("sunrise").toString() },
-						new String[] { "Sunset", sys.get("sunset").toString() },
-						new String[] { "Wind deg", wind.get("deg").toString() },
-						new String[] { "Wind speed", wind.get("speed").toString() }, }));
+		System.out.println(date + " " + Long.valueOf(dt) + " " + dt);
+		System.out
+				.println(FlipTable
+						.of(new String[] { "Name", "Value" },
+
+								new String[][] {
+										new String[] {
+												"Date",
+												weatherData.get("dt")
+														.toString() },
+										new String[] {
+												"Longitude",
+												coordinates.get("lon")
+														.toString() },
+										new String[] {
+												"Latitude",
+												String.valueOf(coordinates
+														.get("lat")) },
+										new String[] {
+												"Description",
+												(String) weather.getJSONObject(
+														0).get("description") },
+										new String[] {
+												"Main",
+												String.valueOf(weather
+														.getJSONObject(0).get(
+																"main")) },
+										new String[] {
+												"Name",
+												String.valueOf(weatherData
+														.get("name")) },
+										new String[] {
+												"temp",
+												String.valueOf(main.get("temp")) },
+										new String[] {
+												"temp_min",
+												String.valueOf(main
+														.get("temp_min")) },
+										new String[] {
+												"temp_max",
+												String.valueOf(main
+														.get("temp_max")) },
+										// new String[] { "grnd_level",
+										// String.valueOf(main.get("grnd_level"))
+										// },
+										new String[] {
+												"humidity",
+												String.valueOf(main
+														.get("humidity")) },
+										new String[] {
+												"pressure",
+												String.valueOf(main
+														.get("pressure")) },
+										// new String[] { "sea_level",
+										// String.valueOf(main.get("sea_level"))
+										// },
+										new String[] {
+												"Country",
+												String.valueOf(sys
+														.get("country")) },
+										new String[] { "Sunrise",
+												sys.get("sunrise").toString() },
+										new String[] { "Sunset",
+												sys.get("sunset").toString() },
+										new String[] { "Wind deg",
+												wind.get("deg").toString() },
+										new String[] { "Wind speed",
+												wind.get("speed").toString() }, }));
 	}
 
 }
