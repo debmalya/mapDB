@@ -140,7 +140,7 @@ public class SGXScrapper {
 			parseTable(doc, "table2", details);
 
 			if (stockWriter != null) {
-				stockWriter.writeNext(details.toCSV().split(","));
+				 stockWriter.writeNext(details.toCSV().split(","));
 			}
 		} catch (Throwable e) {
 			e.printStackTrace();
@@ -158,6 +158,19 @@ public class SGXScrapper {
 		if (tableElement != null) {
 			tableElement.select("tr").iterator()
 					.forEachRemaining(s -> processEachTableRow(s, details));
+		} else {
+			/**
+			 * Affected symbols R1NS.SI R1NS.SI R1MS.SI R1MS.SI OM2S.SI OM2S.SI
+			 * OM0S.SI OM0S.SI OM5S.SI OM5S.SI AXXZ.SI AXXZ.SI OM7S.SI OM7S.SI
+			 * BSKZ.SI BSKZ.SI T8FS.SI T8FS.SI PH1S.SI PH1S.SI T8GS.SI T8GS.SI
+			 * 7QQS.SI 7QQS.SI PW3Z.SI PW3Z.SI TY6Z.SI TY6Z.SI BIOZ.SI BIOZ.SI
+			 * S3TB.SI S3TB.SI P9GZ.SI P9GZ.SI BTNZ.SI BTNZ.SI AFUS.SI AFUS.SI
+			 * AFVS.SI AFVS.SI Symbol.SI Symbol.SI AFWS.SI AFWS.SI OL9S.SI
+			 * OL9S.SI 6SUS.SI 6SUS.SI 7PMS.SI 7PMS.SI BRQZ.SI BRQZ.SI BTWZ.SI
+			 * BTWZ.SI BEYZ.SI BEYZ.SI BJFZ.SI BJFZ.SI BJGS.SI BJGS.SI 3UIS.SI
+			 * 3UIS.SI BJHS.SI BJHS.SI 3UJS.SI 3UJS.SI R1LS.SI R1LS.SI
+			 */
+			System.err.println(details.getSymbol());
 		}
 
 	}
