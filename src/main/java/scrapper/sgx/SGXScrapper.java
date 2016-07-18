@@ -17,22 +17,24 @@ package scrapper.sgx;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-
-import model.StockDetails;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import au.com.bytecode.opencsv.CSVReader;
 import au.com.bytecode.opencsv.CSVWriter;
+import model.StockDetails;
 
 /**
  * @author debmalyajash
@@ -60,7 +62,7 @@ public class SGXScrapper {
 	/**
 	 * 
 	 */
-	private static final int PREFERRED_WIDTH = 35;
+	// private static final int PREFERRED_WIDTH = 35;
 
 	private static final String FOOL = "http://www.sgx.com";
 
@@ -71,14 +73,39 @@ public class SGXScrapper {
 	private static CSVWriter stockWriter = null;
 
 	public static void main(String... args) throws IOException {
-		// fooled();
-		// yahooFinanceMultiple(args);
+		long startTime = System.currentTimeMillis();
+		// Get stock symbol map, key is symbol value is company name.
+		Map<String, String> symbolMap = new HashMap<>();
 
-		Element doc = Jsoup
-				.connect(
-						"http://download.finance.yahoo.com/d/quotes.csv?s=5HT.SI&amp;f=sl1d1t1c1ohgv&amp;e=.csv")
-				.get();
-		System.out.println(doc);
+		try (CSVReader reader = new CSVReader(new FileReader("./src/main/resources/SGX.csv"))) {
+			List<String[]> allValues = reader.readAll();
+			for (String[] each : allValues) {
+				symbolMap.put(each[0], each[1]);
+			}
+		} catch (IOException e) {
+			System.err.println(e.getMessage());
+		}
+
+		// Now scrap through SGX site
+		SGXScrapper scrapper = new SGXScrapper();
+		String currentSymbol = "";
+		try {
+
+			if (!symbolMap.isEmpty()) {
+				Set<String> keySet = symbolMap.keySet();
+				for (String eachSymbol : keySet) {
+					currentSymbol = eachSymbol;
+					scrapper.yahooFinance(eachSymbol, symbolMap.get(eachSymbol));
+				}
+
+			}
+		} catch (Throwable th) {
+			System.err.println(th.getMessage());
+			LOGGER.error(YAHOO_FINANCE + currentSymbol + " " + th.getMessage(), th);
+		} finally {
+			scrapper.cleanUp();
+		}
+		System.out.println("Time taken :" + (System.currentTimeMillis() - startTime));
 	}
 
 	public SGXScrapper() {
@@ -98,25 +125,17 @@ public class SGXScrapper {
 				stockWriter.writeNext(StockDetails.getCSVHeader().split(","));
 			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			LOGGER.error(e.getMessage(), e);
 		}
 	}
 
-	public void yahooFinanceMultiple(String... args) {
-		if (args.length > 0) {
-			for (String each : args) {
-				yahooFinance(each);
-			}
-		}
-	}
-
 	/**
-	 * @param each
+	 * @param stockSymbol
+	 * @param stockName
 	 */
-	public void yahooFinance(String each) {
-		String symbol = each + ".SI";
+	public void yahooFinance(String stockSymbol, String stockName) {
+		String symbol = stockSymbol + ".SI";
 		String url = YAHOO_FINANCE + symbol;
 
 		LOGGER.debug(url);
@@ -127,20 +146,18 @@ public class SGXScrapper {
 			StockDetails details = new StockDetails();
 			details.setExchange("SGX");
 			details.setSymbol(symbol);
+			details.setStockName(stockName);
 			if (quoteSummary != null) {
-				details.setCurrentPrice(Float.valueOf(getValueByClass(
-						quoteSummary, "time_rtq_ticker")));
-				details.setChange(Float.valueOf(getValueByClass(quoteSummary,
-						"time_rtq_ticker")));
-				details.setCurrentPriceRecordTime(getValueByClass(quoteSummary,
-						"time_rtq"));
+				details.setCurrentPrice(Float.valueOf(getValueByClass(quoteSummary, "time_rtq_ticker")));
+				details.setChange(Float.valueOf(getValueByClass(quoteSummary, "time_rtq_ticker")));
+				details.setCurrentPriceRecordTime(getValueByClass(quoteSummary, "time_rtq"));
 			}
 
 			parseTable(doc, "table1", details);
 			parseTable(doc, "table2", details);
 
 			if (stockWriter != null) {
-				 stockWriter.writeNext(details.toCSV().split(","));
+				stockWriter.writeNext(details.toCSV().split(","));
 			}
 		} catch (Throwable e) {
 			e.printStackTrace();
@@ -151,13 +168,11 @@ public class SGXScrapper {
 
 	}
 
-	public static void parseTable(Element doc, String tableid,
-			StockDetails details) {
+	public static void parseTable(Element doc, String tableid, StockDetails details) {
 		Element tableElement = doc.getElementById(tableid);
 
 		if (tableElement != null) {
-			tableElement.select("tr").iterator()
-					.forEachRemaining(s -> processEachTableRow(s, details));
+			tableElement.select("tr").iterator().forEachRemaining(s -> processEachTableRow(s, details));
 		} else {
 			/**
 			 * Affected symbols R1NS.SI R1NS.SI R1MS.SI R1MS.SI OM2S.SI OM2S.SI
@@ -170,7 +185,13 @@ public class SGXScrapper {
 			 * BTWZ.SI BEYZ.SI BEYZ.SI BJFZ.SI BJFZ.SI BJGS.SI BJGS.SI 3UIS.SI
 			 * 3UIS.SI BJHS.SI BJHS.SI 3UJS.SI 3UJS.SI R1LS.SI R1LS.SI
 			 */
-			System.err.println(details.getSymbol());
+			if (tableid.equals("table1")) {
+				System.err.println(YAHOO_FINANCE + details.getSymbol());
+				LOGGER.error("------------------------------------------------------------------");
+				LOGGER.error("Not able to retrieve table :" + YAHOO_FINANCE + details.getSymbol());
+				LOGGER.error(doc);
+				LOGGER.error("------------------------------------------------------------------");
+			}
 		}
 
 	}
@@ -184,7 +205,7 @@ public class SGXScrapper {
 				details.setLastPrice(Float.parseFloat(value));
 				details.setPrevClose(value);
 			} catch (NumberFormatException nfe) {
-				LOGGER.error(nfe.getMessage(), nfe);
+				LOGGER.error("Symbol :" + YAHOO_FINANCE + details.getSymbol() + " ERR : " + nfe.getMessage(), nfe);
 			}
 			break;
 		case "Open:":
@@ -319,14 +340,14 @@ public class SGXScrapper {
 
 		print("\nLinks: (%d)", links.size());
 		for (Element link : links) {
-			// print(" * a: <%s>  (%s)", link.attr("abs:href"),
+			// print(" * a: <%s> (%s)", link.attr("abs:href"),
 			// trim(link.text(), 35));
 			if (link.text().equalsIgnoreCase("Gainers")) {
 				Element subDoc = Jsoup.connect(link.attr("abs:href")).get();
 				System.out.println(link.attr("abs:href"));
 				debugLog(subDoc.text(), 80, "sgx_gainers.txt");
 			}
-			// print(" * a: <%s>  (%s)", link.attr("abs:href"), link.text());
+			// print(" * a: <%s> (%s)", link.attr("abs:href"), link.text());
 		}
 
 	}
@@ -336,8 +357,7 @@ public class SGXScrapper {
 	 * @param preferredWidth
 	 * @throws FileNotFoundException
 	 */
-	private static void debugLog(String text, int preferredWidth,
-			String fileName) throws FileNotFoundException {
+	private static void debugLog(String text, int preferredWidth, String fileName) throws FileNotFoundException {
 		PrintWriter sgxWriter = null;
 		try {
 			String[] allWords = text.split(" ");

@@ -59,7 +59,7 @@ public class SGXScrapperTest {
 				Set<String> keySet = symbolMap.keySet();
 				for (String eachSymbol : keySet) {
 //					pool.submit(() -> scrapper.yahooFinance(eachSymbol));
-					scrapper.yahooFinance(eachSymbol);
+					scrapper.yahooFinance(eachSymbol,symbolMap.get(eachSymbol));
 				}
 
 			}

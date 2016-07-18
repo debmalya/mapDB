@@ -11,6 +11,10 @@ import com.googlecode.cqengine.query.option.QueryOptions;
 
 public class StockDetails implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final String NA = "N/A";
 	private static final Logger LOGGER = Logger.getLogger(StockDetails.class);
 	/**
 	 * 
@@ -54,6 +58,7 @@ public class StockDetails implements Serializable {
 	private String nav;
 	private String netAssets;
 	private String ytdReturnMkt;
+	private String stockName;
 
 	/**
 	 * @return the previousClose
@@ -203,6 +208,8 @@ public class StockDetails implements Serializable {
 		csvHeader.append(COMMA);
 		csvHeader.append("symbol");
 		csvHeader.append(COMMA);
+		csvHeader.append("Name");
+		csvHeader.append(COMMA);
 		csvHeader.append("currentPrice");
 		csvHeader.append(COMMA);
 		csvHeader.append("lastPrice");
@@ -279,67 +286,69 @@ public class StockDetails implements Serializable {
 		csvDetail.append(COMMA);
 		csvDetail.append(symbol);
 		csvDetail.append(COMMA);
+		csvDetail.append(stockName);
+		csvDetail.append(COMMA);
 		csvDetail.append(currentPrice);
 		csvDetail.append(COMMA);
 		csvDetail.append(lastPrice);
 		csvDetail.append(COMMA);
 		csvDetail.append(change);
 		csvDetail.append(COMMA);
-		csvDetail.append(marketCapital != null ? marketCapital : "N/A");
+		csvDetail.append(marketCapital != null ? marketCapital : NA);
 		csvDetail.append(COMMA);
 		csvDetail.append(currentPriceRecordTime);
 		csvDetail.append(COMMA);
 		csvDetail.append(previousClose);
 		csvDetail.append(COMMA);
-		csvDetail.append(bid);
+		csvDetail.append(bid != null ? bid : NA);
 		csvDetail.append(COMMA);
 		csvDetail.append(open);
 		csvDetail.append(COMMA);
-		csvDetail.append(oneYrTargetEst != null ? oneYrTargetEst : "N/A");
+		csvDetail.append(oneYrTargetEst != null ? oneYrTargetEst : NA);
 		csvDetail.append(COMMA);
-		csvDetail.append(beta != null ? beta : "N/A");
+		csvDetail.append(beta != null ? beta : NA);
 		csvDetail.append(COMMA);
-		csvDetail.append(nextEarningDate != null ? nextEarningDate : "N/A");
+		csvDetail.append(nextEarningDate != null ? nextEarningDate : NA);
 		csvDetail.append(COMMA);
-		csvDetail.append(ask);
+		csvDetail.append(ask != null ? ask : NA);
 		csvDetail.append(COMMA);
-		csvDetail.append(daysRange);
+		csvDetail.append(daysRange != null ? daysRange : NA);
 		csvDetail.append(COMMA);
-		csvDetail.append(yrRange != null ? yrRange : "N/A");
+		csvDetail.append(yrRange != null ? yrRange : NA);
 		csvDetail.append(COMMA);
-		csvDetail.append(volume != null ? volume : "N/A");
+		csvDetail.append(volume != null ? volume : NA);
 		csvDetail.append(COMMA);
-		csvDetail.append(averageVolume != null ? averageVolume : "N/A");
+		csvDetail.append(averageVolume != null ? averageVolume : NA);
 		csvDetail.append(COMMA);
-		csvDetail.append(peRatio != null ? peRatio : "N/A");
+		csvDetail.append(peRatio != null ? peRatio : NA);
 		csvDetail.append(COMMA);
-		csvDetail.append(eps != null ? eps : "N/A");
+		csvDetail.append(eps != null ? eps : NA);
 		csvDetail.append(COMMA);
-		csvDetail.append(divNYield != null ? divNYield : "N/A");
+		csvDetail.append(divNYield != null ? divNYield : NA);
 		csvDetail.append(COMMA);
-		csvDetail.append(exercisePrice != null ? exercisePrice : "N/A");
+		csvDetail.append(exercisePrice != null ? exercisePrice : NA);
 		csvDetail.append(COMMA);
-		csvDetail.append(expirationDate != null ? expirationDate : "N/A");
+		csvDetail.append(expirationDate != null ? expirationDate : NA);
 		csvDetail.append(COMMA);
-		csvDetail.append(expirationPrice != null ? expirationPrice : "N/A");
+		csvDetail.append(expirationPrice != null ? expirationPrice : NA);
 		csvDetail.append(COMMA);
-		csvDetail.append(type != null ? type : "N/A");
+		csvDetail.append(type != null ? type : NA);
 		csvDetail.append(COMMA);
-		csvDetail.append(minimumTradeSize != null ? minimumTradeSize : "N/A");
+		csvDetail.append(minimumTradeSize != null ? minimumTradeSize : NA);
 		csvDetail.append(COMMA);
-		csvDetail.append(share != null ? share : "N/A");
+		csvDetail.append(share != null ? share : NA);
 		csvDetail.append(COMMA);
-		csvDetail.append(issuer != null ? issuer : "N/A");
+		csvDetail.append(issuer != null ? issuer : NA);
 		csvDetail.append(COMMA);
-		csvDetail.append(underlying != null ? underlying : "N/A");
+		csvDetail.append(underlying != null ? underlying : NA);
 		csvDetail.append(COMMA);
-		csvDetail.append(yieldTTM != null ? yieldTTM : "N/A");
+		csvDetail.append(yieldTTM != null ? yieldTTM : NA);
 		csvDetail.append(COMMA);
-		csvDetail.append(nav != null ? nav : "N/A");
+		csvDetail.append(nav != null ? nav : NA);
 		csvDetail.append(COMMA);
-		csvDetail.append(netAssets != null ? netAssets : "N/A");
+		csvDetail.append(netAssets != null ? netAssets : NA);
 		csvDetail.append(COMMA);
-		csvDetail.append(ytdReturnMkt != null ? ytdReturnMkt : "N/A");
+		csvDetail.append(ytdReturnMkt != null ? ytdReturnMkt : NA);
 
 		return csvDetail.toString();
 	}
@@ -619,6 +628,14 @@ public class StockDetails implements Serializable {
 	 */
 	public void setYtdReturnMkt(String value) {
 		ytdReturnMkt = value;
+	}
+
+	/**
+	 * @param stockName
+	 */
+	public void setStockName(String stockName) {
+		this.stockName = stockName;
+		
 	}
 
 }
