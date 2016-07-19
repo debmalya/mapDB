@@ -84,6 +84,7 @@ public class SGXScrapper {
 			}
 		} catch (IOException e) {
 			System.err.println(e.getMessage());
+			LOGGER.error(e.getMessage(),e);
 		}
 
 		// Now scrap through SGX site
