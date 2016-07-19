@@ -23,9 +23,12 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import model.StockDetails;
 
 import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;
@@ -34,7 +37,6 @@ import org.jsoup.select.Elements;
 
 import au.com.bytecode.opencsv.CSVReader;
 import au.com.bytecode.opencsv.CSVWriter;
-import model.StockDetails;
 
 /**
  * @author debmalyajash
@@ -43,6 +45,11 @@ import model.StockDetails;
 public class SGXScrapper {
 
 	private static Map<String, String> stockSites = new HashMap<>();
+	
+	/**
+	 * SGX Symbols which are no more active.
+	 */
+	private static Set<String> inActiveSymbols = new HashSet<String>();
 
 	static {
 
@@ -106,6 +113,8 @@ public class SGXScrapper {
 		} finally {
 			scrapper.cleanUp();
 		}
+		LOGGER.debug("Inactive symbols");
+		LOGGER.debug(inActiveSymbols);
 		System.out.println("Time taken :" + (System.currentTimeMillis() - startTime));
 	}
 
@@ -139,7 +148,6 @@ public class SGXScrapper {
 		String symbol = stockSymbol + ".SI";
 		String url = YAHOO_FINANCE + symbol;
 
-//		LOGGER.debug(url);
 
 		try {
 			Element doc = Jsoup.connect(url).get();
@@ -175,23 +183,9 @@ public class SGXScrapper {
 		if (tableElement != null) {
 			tableElement.select("tr").iterator().forEachRemaining(s -> processEachTableRow(s, details));
 		} else {
-			/**
-			 * Affected symbols R1NS.SI R1NS.SI R1MS.SI R1MS.SI OM2S.SI OM2S.SI
-			 * OM0S.SI OM0S.SI OM5S.SI OM5S.SI AXXZ.SI AXXZ.SI OM7S.SI OM7S.SI
-			 * BSKZ.SI BSKZ.SI T8FS.SI T8FS.SI PH1S.SI PH1S.SI T8GS.SI T8GS.SI
-			 * 7QQS.SI 7QQS.SI PW3Z.SI PW3Z.SI TY6Z.SI TY6Z.SI BIOZ.SI BIOZ.SI
-			 * S3TB.SI S3TB.SI P9GZ.SI P9GZ.SI BTNZ.SI BTNZ.SI AFUS.SI AFUS.SI
-			 * AFVS.SI AFVS.SI Symbol.SI Symbol.SI AFWS.SI AFWS.SI OL9S.SI
-			 * OL9S.SI 6SUS.SI 6SUS.SI 7PMS.SI 7PMS.SI BRQZ.SI BRQZ.SI BTWZ.SI
-			 * BTWZ.SI BEYZ.SI BEYZ.SI BJFZ.SI BJFZ.SI BJGS.SI BJGS.SI 3UIS.SI
-			 * 3UIS.SI BJHS.SI BJHS.SI 3UJS.SI 3UJS.SI R1LS.SI R1LS.SI
-			 */
+			
 			if (tableid.equals("table1")) {
-				System.err.println(YAHOO_FINANCE + details.getSymbol());
-				LOGGER.error("------------------------------------------------------------------");
-				LOGGER.error("Not able to retrieve table :" + YAHOO_FINANCE + details.getSymbol());
-				LOGGER.error(doc);
-				LOGGER.error("------------------------------------------------------------------");
+				inActiveSymbols.add(details.getSymbol());
 			}
 		}
 
