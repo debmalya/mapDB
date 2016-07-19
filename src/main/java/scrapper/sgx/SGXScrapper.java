@@ -138,7 +138,7 @@ public class SGXScrapper {
 		String symbol = stockSymbol + ".SI";
 		String url = YAHOO_FINANCE + symbol;
 
-		LOGGER.debug(url);
+//		LOGGER.debug(url);
 
 		try {
 			Element doc = Jsoup.connect(url).get();
