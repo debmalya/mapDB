@@ -1,6 +1,8 @@
 package model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.log4j.Logger;
@@ -273,6 +275,55 @@ public class StockDetails implements Serializable {
 		csvHeader.append("YTD Return (Mkt)");
 
 		return csvHeader.toString();
+	}
+	
+	/**
+	 * To return result in CSV format.
+	 * 
+	 * @return return in CSV format.
+	 */
+	public String[] toArray() {
+		List<String> details = new ArrayList<>();
+		details.add(exchange);
+		details.add(symbol);
+		details.add(stockName);
+		details.add(String.valueOf(currentPrice));
+		details.add(String.valueOf(lastPrice));
+		details.add(String.valueOf(change));
+		details.add(marketCapital != null ? marketCapital : NA);
+		details.add(currentPriceRecordTime);
+		details.add(String.valueOf(previousClose));
+		details.add(bid != null ? bid : NA);
+		details.add(String.valueOf(open));
+		details.add(oneYrTargetEst != null ? oneYrTargetEst : NA);
+		details.add(beta != null ? beta : NA);
+		details.add(nextEarningDate != null ? nextEarningDate : NA);
+		
+		details.add(ask != null ? ask : NA);
+		details.add(daysRange != null ? daysRange : NA);
+		details.add(yrRange != null ? yrRange : NA);
+		details.add(volume != null ? volume : NA);
+		details.add(averageVolume != null ? averageVolume : NA);
+		details.add(peRatio != null ? peRatio : NA);
+		
+		details.add(eps != null ? eps : NA);
+		details.add(divNYield != null ? divNYield : NA);
+		details.add(exercisePrice != null ? exercisePrice : NA);
+		details.add(expirationDate != null ? expirationDate : NA);
+		details.add(expirationPrice != null ? expirationPrice : NA);
+		
+		details.add(type != null ? type : NA);
+		details.add(minimumTradeSize != null ? minimumTradeSize : NA);
+		details.add(share != null ? share : NA);
+		details.add(issuer != null ? issuer : NA);
+		details.add(underlying != null ? underlying : NA);
+		
+		details.add(yieldTTM != null ? yieldTTM : NA);
+		details.add(nav != null ? nav : NA);
+		details.add(netAssets != null ? netAssets : NA);
+		details.add(ytdReturnMkt != null ? ytdReturnMkt : NA);
+
+		return details.toArray(new String[0]);
 	}
 
 	/**

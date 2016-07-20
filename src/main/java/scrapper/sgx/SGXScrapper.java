@@ -45,11 +45,16 @@ import au.com.bytecode.opencsv.CSVWriter;
 public class SGXScrapper {
 
 	private static Map<String, String> stockSites = new HashMap<>();
-	
+
 	/**
 	 * SGX Symbols which are no more active.
 	 */
 	private static Set<String> inActiveSymbols = new HashSet<String>();
+	
+	/**
+	 * 
+	 */
+	private static Set<String> symbolsToBeMonitored = new HashSet<String>();
 
 	static {
 
@@ -91,7 +96,7 @@ public class SGXScrapper {
 			}
 		} catch (IOException e) {
 			System.err.println(e.getMessage());
-			LOGGER.error(e.getMessage(),e);
+			LOGGER.error(e.getMessage(), e);
 		}
 
 		// Now scrap through SGX site
@@ -115,6 +120,8 @@ public class SGXScrapper {
 		}
 		LOGGER.debug("Inactive symbols");
 		LOGGER.debug(inActiveSymbols);
+		LOGGER.debug("Check this symbols for monitoring");
+		symbolsToBeMonitored.forEach(s->LOGGER.debug(s));
 		System.out.println("Time taken :" + (System.currentTimeMillis() - startTime));
 	}
 
@@ -148,7 +155,6 @@ public class SGXScrapper {
 		String symbol = stockSymbol + ".SI";
 		String url = YAHOO_FINANCE + symbol;
 
-
 		try {
 			Element doc = Jsoup.connect(url).get();
 			Element quoteSummary = doc.getElementById("yfi_rt_quote_summary");
@@ -160,17 +166,24 @@ public class SGXScrapper {
 				details.setCurrentPrice(Float.valueOf(getValueByClass(quoteSummary, "time_rtq_ticker")));
 				details.setChange(Float.valueOf(getValueByClass(quoteSummary, "time_rtq_ticker")));
 				details.setCurrentPriceRecordTime(getValueByClass(quoteSummary, "time_rtq"));
+				// If it is today's date then there is only time no date (e.g. 10:10 SGT)
+				// If it is today's then it is active, good for monitoring.
+				if (details.getCurrentPriceRecordTime().length() < 10) {
+					// may be of today's entry.
+					symbolsToBeMonitored.add(stockSymbol+ " " + details.getCurrentPriceRecordTime());
+					
+				}
 			}
 
 			parseTable(doc, "table1", details);
 			parseTable(doc, "table2", details);
 
 			if (stockWriter != null) {
-				stockWriter.writeNext(details.toCSV().split(","));
+				stockWriter.writeNext(details.toArray());
 			}
 		} catch (Throwable e) {
-			e.printStackTrace();
-			System.err.println(e.getMessage());
+			LOGGER.error(e.getMessage(),e);
+			System.err.println(url + e.getMessage());
 		} finally {
 
 		}
@@ -183,7 +196,7 @@ public class SGXScrapper {
 		if (tableElement != null) {
 			tableElement.select("tr").iterator().forEachRemaining(s -> processEachTableRow(s, details));
 		} else {
-			
+
 			if (tableid.equals("table1")) {
 				inActiveSymbols.add(details.getSymbol());
 			}
