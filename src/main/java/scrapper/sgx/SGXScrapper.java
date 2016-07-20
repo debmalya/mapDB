@@ -54,7 +54,7 @@ public class SGXScrapper {
 	/**
 	 * 
 	 */
-	private static Set<String> symbolsToBeMonitored = new HashSet<String>();
+	private static Set<String[]> symbolsToBeMonitored = new HashSet<>();
 
 	static {
 
@@ -121,7 +121,7 @@ public class SGXScrapper {
 		LOGGER.debug("Inactive symbols");
 		LOGGER.debug(inActiveSymbols);
 		LOGGER.debug("Check this symbols for monitoring");
-		symbolsToBeMonitored.forEach(s->LOGGER.debug(s));
+		symbolsToBeMonitored.forEach(s->LOGGER.debug(Arrays.toString(s)));
 		System.out.println("Time taken :" + (System.currentTimeMillis() - startTime));
 	}
 
@@ -168,9 +168,9 @@ public class SGXScrapper {
 				details.setCurrentPriceRecordTime(getValueByClass(quoteSummary, "time_rtq"));
 				// If it is today's date then there is only time no date (e.g. 10:10 SGT)
 				// If it is today's then it is active, good for monitoring.
-				if (details.getCurrentPriceRecordTime().length() < 10) {
+				if (isCurrent(details)) {
 					// may be of today's entry.
-					symbolsToBeMonitored.add(stockSymbol+ " " + details.getCurrentPriceRecordTime());
+					symbolsToBeMonitored.add(new String[]{stockSymbol, details.getCurrentPriceRecordTime()});
 					
 				}
 			}
@@ -178,16 +178,20 @@ public class SGXScrapper {
 			parseTable(doc, "table1", details);
 			parseTable(doc, "table2", details);
 
-			if (stockWriter != null) {
+			if (stockWriter != null && isCurrent(details)) {
 				stockWriter.writeNext(details.toArray());
 			}
 		} catch (Throwable e) {
 			LOGGER.error(e.getMessage(),e);
-			System.err.println(url + e.getMessage());
+			System.err.println(url + "  ERR :" + e.getMessage());
 		} finally {
 
 		}
 
+	}
+
+	private boolean isCurrent(StockDetails details) {
+		return !"NA".equals(details.getCurrentPriceRecordTime()) && details.getCurrentPriceRecordTime().length() < 10;
 	}
 
 	public static void parseTable(Element doc, String tableid, StockDetails details) {
