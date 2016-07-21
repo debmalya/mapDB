@@ -151,14 +151,15 @@ public class SGXScrapper {
 	 * @param stockSymbol
 	 * @param stockName
 	 */
-	public void yahooFinance(String stockSymbol, String stockName) {
+	public StockDetails yahooFinance(String stockSymbol, String stockName) {
 		String symbol = stockSymbol + ".SI";
 		String url = YAHOO_FINANCE + symbol;
+		StockDetails details = new StockDetails();
 
 		try {
 			Element doc = Jsoup.connect(url).get();
 			Element quoteSummary = doc.getElementById("yfi_rt_quote_summary");
-			StockDetails details = new StockDetails();
+			
 			details.setExchange("SGX");
 			details.setSymbol(symbol);
 			details.setStockName(stockName);
@@ -184,9 +185,8 @@ public class SGXScrapper {
 		} catch (Throwable e) {
 			LOGGER.error(e.getMessage(),e);
 			System.err.println(url + "  ERR :" + e.getMessage());
-		} finally {
-
-		}
+		} 
+		return details;
 
 	}
 
