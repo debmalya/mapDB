@@ -50,11 +50,13 @@ public class SGXScrapper {
 	 * SGX Symbols which are no more active.
 	 */
 	private static Set<String> inActiveSymbols = new HashSet<String>();
-	
+
 	/**
 	 * 
 	 */
 	private static Set<String[]> symbolsToBeMonitored = new HashSet<>();
+
+	private static Set<String[]> symbolsWithPEInteresting = new HashSet<>();
 
 	static {
 
@@ -84,20 +86,11 @@ public class SGXScrapper {
 
 	private static CSVWriter stockWriter = null;
 
+	// Get stock symbol map, key is symbol value is company name.
+	private static Map<String, String> symbolMap = new HashMap<>();
+
 	public static void main(String... args) throws IOException {
 		long startTime = System.currentTimeMillis();
-		// Get stock symbol map, key is symbol value is company name.
-		Map<String, String> symbolMap = new HashMap<>();
-
-		try (CSVReader reader = new CSVReader(new FileReader("./src/main/resources/SGX.csv"))) {
-			List<String[]> allValues = reader.readAll();
-			for (String[] each : allValues) {
-				symbolMap.put(each[0], each[1]);
-			}
-		} catch (IOException e) {
-			System.err.println(e.getMessage());
-			LOGGER.error(e.getMessage(), e);
-		}
 
 		// Now scrap through SGX site
 		SGXScrapper scrapper = new SGXScrapper();
@@ -118,15 +111,40 @@ public class SGXScrapper {
 		} finally {
 			scrapper.cleanUp();
 		}
+
+		PrintWriter pw = new PrintWriter(new File("SGX_Insights.csv"));
+		pw.println("Stock Symbol,Stock Name,Current Price / Earning per Share");
 		LOGGER.debug("Inactive symbols");
 		LOGGER.debug(inActiveSymbols);
 		LOGGER.debug("Check this symbols for monitoring");
-		symbolsToBeMonitored.forEach(s->LOGGER.debug(Arrays.toString(s)));
+		LOGGER.debug("==========================================================");
+		symbolsToBeMonitored.forEach(s -> LOGGER.debug(Arrays.toString(s)));
+		LOGGER.debug("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+		LOGGER.debug("Current Price / Earning per share");
+		symbolsWithPEInteresting.forEach(s -> {
+			LOGGER.debug(Arrays.toString(s));
+			pw.println(s[0]+",");
+		});
+		pw.flush();
+		pw.close();
 		System.out.println("Time taken :" + (System.currentTimeMillis() - startTime));
 	}
 
 	public SGXScrapper() {
 		try {
+
+			if (symbolMap.isEmpty()) {
+				try (CSVReader reader = new CSVReader(new FileReader("./src/main/resources/SGX.csv"))) {
+					List<String[]> allValues = reader.readAll();
+					for (String[] each : allValues) {
+						symbolMap.put(each[0], each[1]);
+					}
+				} catch (IOException e) {
+					System.err.println(e.getMessage());
+					LOGGER.error(e.getMessage(), e);
+				}
+			}
+
 			String pathname = "sgx_yahoo.csv";
 			boolean existing = false;
 
@@ -146,6 +164,8 @@ public class SGXScrapper {
 			LOGGER.error(e.getMessage(), e);
 		}
 	}
+	
+	
 
 	/**
 	 * @param stockSymbol
@@ -159,7 +179,7 @@ public class SGXScrapper {
 		try {
 			Element doc = Jsoup.connect(url).get();
 			Element quoteSummary = doc.getElementById("yfi_rt_quote_summary");
-			
+
 			details.setExchange("SGX");
 			details.setSymbol(symbol);
 			details.setStockName(stockName);
@@ -167,31 +187,52 @@ public class SGXScrapper {
 				details.setCurrentPrice(Float.valueOf(getValueByClass(quoteSummary, "time_rtq_ticker")));
 				details.setChange(Float.valueOf(getValueByClass(quoteSummary, "time_rtq_ticker")));
 				details.setCurrentPriceRecordTime(getValueByClass(quoteSummary, "time_rtq"));
-				// If it is today's date then there is only time no date (e.g. 10:10 SGT)
+				// If it is today's date then there is only time no date (e.g.
+				// 10:10 SGT)
 				// If it is today's then it is active, good for monitoring.
 				if (isCurrent(details)) {
 					// may be of today's entry.
-					symbolsToBeMonitored.add(new String[]{stockSymbol, details.getCurrentPriceRecordTime()});
-					
+					symbolsToBeMonitored
+							.add(new String[] { stockSymbol, stockName, details.getCurrentPriceRecordTime() });
+
 				}
 			}
 
 			parseTable(doc, "table1", details);
 			parseTable(doc, "table2", details);
 
+			if (isIntererstingPeRation(details.getPERatio())) {
+				symbolsWithPEInteresting.add(new String[] { stockSymbol, stockName, details.getPERatio() });
+			}
+
 			if (stockWriter != null && isCurrent(details)) {
 				stockWriter.writeNext(details.toArray());
 			}
 		} catch (Throwable e) {
-			LOGGER.error(e.getMessage(),e);
+			LOGGER.error(url + "  ERR :" + e.getMessage(), e);
 			System.err.println(url + "  ERR :" + e.getMessage());
-		} 
+		}
 		return details;
 
 	}
 
+	/**
+	 * @param peRatio
+	 * @return
+	 */
+	private boolean isIntererstingPeRation(String peRatio) {
+		float f = 0.00f;
+		try {
+			f = Float.parseFloat(peRatio);
+		} catch (NumberFormatException nfe) {
+
+		}
+		return f > 0.00f;
+	}
+
 	private boolean isCurrent(StockDetails details) {
-		return !"NA".equals(details.getCurrentPriceRecordTime()) && details.getCurrentPriceRecordTime().length() < 10;
+		return details.getCurrentPriceRecordTime() != null && !"NA".equals(details.getCurrentPriceRecordTime())
+				&& details.getCurrentPriceRecordTime().length() < 10;
 	}
 
 	public static void parseTable(Element doc, String tableid, StockDetails details) {
@@ -216,8 +257,8 @@ public class SGXScrapper {
 			try {
 				details.setLastPrice(Float.parseFloat(value));
 				details.setPrevClose(value);
-			} catch (NumberFormatException nfe) {
-				LOGGER.error("Symbol :" + YAHOO_FINANCE + details.getSymbol() + " ERR : " + nfe.getMessage(), nfe);
+			} catch (NumberFormatException ignore) {
+
 			}
 			break;
 		case "Open:":

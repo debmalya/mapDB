@@ -560,6 +560,14 @@ public class StockDetails implements Serializable {
 	public void setPERatio(String value) {
 		peRatio = value;
 	}
+	
+	/**
+	 * 
+	 * @return current price / last reported earning per share.
+	 */
+	public String getPERatio() {
+		return peRatio != null ? peRatio.trim() : "";
+	}
 
 	/**
 	 * @param value
@@ -567,6 +575,14 @@ public class StockDetails implements Serializable {
 	public void setEPS(String value) {
 		eps = value;
 
+	}
+	
+	/**
+	 * 
+	 * @return earning per share.
+	 */
+	public String getEPS(){
+		return eps;
 	}
 
 	/**
