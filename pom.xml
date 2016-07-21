@@ -151,7 +151,19 @@
 			<scope>system</scope>
 			<systemPath>${project.basedir}/lib/com.ibm.streamsx.topology.jar</systemPath>
 		</dependency>
-		
+		<dependency>
+			<groupId>com.ibm.streams</groupId>
+			<artifactId>operator</artifactId>
+			<version>4.0</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/lib/com.ibm.streams.operator.jar</systemPath>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.mina</groupId>
+			<artifactId>mina-core</artifactId>
+			<version>3.0.0-M2</version>
+		</dependency>
+
 	</dependencies>
 
 	<repositories>

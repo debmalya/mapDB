@@ -113,7 +113,7 @@ public class SGXScrapper {
 		}
 
 		PrintWriter pw = new PrintWriter(new File("SGX_Insights.csv"));
-		pw.println("Stock Symbol,Stock Name,Current Price / Earning per Share");
+//		pw.println("Stock Symbol,Stock Name,Current Price / Earning per Share");
 		LOGGER.debug("Inactive symbols");
 		LOGGER.debug(inActiveSymbols);
 		LOGGER.debug("Check this symbols for monitoring");
@@ -123,7 +123,7 @@ public class SGXScrapper {
 		LOGGER.debug("Current Price / Earning per share");
 		symbolsWithPEInteresting.forEach(s -> {
 			LOGGER.debug(Arrays.toString(s));
-			pw.println(s[0]+",");
+			pw.println("\""+s[0]+"\""+",");
 		});
 		pw.flush();
 		pw.close();

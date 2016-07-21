@@ -1,5 +1,5 @@
 # mapDB
-Example of mapDB , JSoup, CQEngine, JetBrains xodus and JavaFX.
+Example of mapDB , JSoup, CQEngine, JetBrains xodus,ibm streams and JavaFX.
 
 It takes stock values from https://www.google.com/finance and stores into mapDB file database.
 
@@ -10,3 +10,8 @@ A stock based application using jsoup, mapdb and google finance. Storing stock v
 Run worldMarket.sh and if everything is fine, you view the screen like below.
 
 ![World Market with Java FX, MapDB, GoogleFinance](WorldMarketScreenShot.png)
+
+To install added jars in lib folder
+mvn install:install-file -Dfile=./lib/com.ibm.streamsx.topology.jar -DgroupId=com.ibm -DartifactId=streamsx -Dversion=1.4 -Dpackaging=com.ibm
+
+mvn install:install-file -Dfile=./lib/com.ibm.streams.operator.jar -DgroupId=ibm.streams -DartifactId=operator -Dversion=4.0 -Dpackaging=com.ibm
