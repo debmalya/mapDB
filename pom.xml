@@ -195,5 +195,5 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
-	<packaging>pom</packaging>
+	<packaging>jar</packaging>
 </project>
