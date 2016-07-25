@@ -4,6 +4,8 @@
 package scrapper.sgx;
 
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
@@ -17,30 +19,30 @@ public class BusinessTimesScrapper {
 
 	/**
 	 * @param args
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
 		parse();
 
 	}
-	
+
 	public static void parse() throws IOException {
-		Element doc = Jsoup.connect("http://www.businesstimes.com.sg").get();
-//		getText(doc);
-		Elements allElements = doc.getAllElements();
-		for (Element each:allElements) {
-			System.out.println(each);
-//			getText(each);
+		// http://www.businesstimes.com.sg/breaking-news
+		Element doc = Jsoup.connect(
+				"http://www.businesstimes.com.sg/breaking-news").get();
+		Elements links = doc.select("a[href]");
+
+		boolean canStartPrinting = false;
+		for (Element link : links) {
+			String text = link.text();
+			if (canStartPrinting) {
+				System.out.printf("<%s>  (%s)\n", link.attr("abs:href"),
+						link.text());
+			}
+			if (text.contains("Banking") && text.contains("Finance")) {
+				canStartPrinting = true;
+			}
 		}
 	}
-
-	/**
-	 * @param doc
-	 */
-	private static void getText(Element doc) {
-		System.out.println(doc.text());
-		
-	}
-	
 
 }
