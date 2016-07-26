@@ -28,7 +28,7 @@ public class StockDetails implements Serializable {
 	private static final long serialVersionUID = -2031420822267600090L;
 	private String exchange;
 	private String symbol;
-	private float currentPrice;
+	private String currentPrice;
 	private float lastPrice;
 	private float change;
 	private String marketCapital;
@@ -108,12 +108,12 @@ public class StockDetails implements Serializable {
 		this.symbol = symbol;
 	}
 
-	public float getCurrentPrice() {
+	public String getCurrentPrice() {
 		return currentPrice;
 	}
 
-	public void setCurrentPrice(float currentPrice) {
-		this.currentPrice = currentPrice;
+	public void setCurrentPrice(String string) {
+		this.currentPrice = string;
 	}
 
 	public float getLastPrice() {
@@ -157,7 +157,7 @@ public class StockDetails implements Serializable {
 		this.currentPriceRecordTime = currentPriceRecordTime;
 	}
 
-	public StockDetails(String exchange, String symbol, float currentPrice,
+	public StockDetails(String exchange, String symbol, String currentPrice,
 			float lastPrice, float change, String marketCapital,
 			String lastPriceRecordTime, String currentPriceRecordTime) {
 		super();

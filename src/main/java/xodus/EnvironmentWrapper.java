@@ -239,7 +239,7 @@ public class EnvironmentWrapper {
 			for (Entity stock: allStocks) {
 				String symbol = (String) stock.getProperty("symbol");
 				String exchange = (String)stock.getProperty("exchange");
-				float currentPrice = (Float)stock.getProperty("currentPrice");
+				String currentPrice = (String)stock.getProperty("currentPrice");
 				String currentPriceRecordTime = (String)stock.getProperty("currentPriceRecordTime");
 				float lastPrice = (Float)stock.getProperty("lastPrice"); 
 				String lastPriceRecordTime = (String)stock.getProperty("lastPriceRecordTime");

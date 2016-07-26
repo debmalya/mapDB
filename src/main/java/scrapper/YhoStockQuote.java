@@ -26,13 +26,9 @@ public class YhoStockQuote {
 			Element doc = Jsoup.connect(ScrapperConstants.YAHOO_FINANCE + symbol).get();
 			Elements quoteSummaryElement = doc.select(".yfi_rt_quote_summary");
 			String stockExchange = quoteSummaryElement.select(".rtq_exch").text();
-			String strPrice = quoteSummaryElement.select(".time_rtq_ticker").text();
-			float currentPrice = 0.00f;
-			try {
-				currentPrice = Float.parseFloat(strPrice);
-			} catch (NumberFormatException nfe) {
-				LOGGER.error(nfe.getMessage());
-			}
+//			String strPrice = quoteSummaryElement.select(".time_rtq_ticker").text();
+			String currentPrice = quoteSummaryElement.select(".time_rtq_ticker").text();
+			
 
 			String[] time = quoteSummaryElement.select(".time_rtq").text().split(" ");
 			StringBuilder currentTime = new StringBuilder();
@@ -63,9 +59,7 @@ public class YhoStockQuote {
 			}
 
 			float change = 0.00f;
-			if (currentPrice != 0.00f && lastPrice != 0.00f) {
-				change = currentPrice - lastPrice;
-			}
+			
 
 			StockDetails stockDetails = new StockDetails(stockExchange, symbol, currentPrice, lastPrice, change, "",
 					lastTime.toString(), currentTime.toString());

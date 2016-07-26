@@ -185,8 +185,8 @@ public class SGXScrapper {
 			details.setSymbol(symbol);
 			details.setStockName(stockName);
 			if (quoteSummary != null) {
-				details.setCurrentPrice(Float.valueOf(getValueByClass(
-						quoteSummary, "time_rtq_ticker")));
+				details.setCurrentPrice(getValueByClass(
+						quoteSummary, "time_rtq_ticker"));
 				details.setChange(Float.valueOf(getValueByClass(quoteSummary,
 						"time_rtq_ticker")));
 				details.setCurrentPriceRecordTime(getValueByClass(quoteSummary,
