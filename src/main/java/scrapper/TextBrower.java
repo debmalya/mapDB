@@ -38,6 +38,9 @@ public class TextBrower {
 		if (args.length >= 1){
 			for (String eachURL: args) {
 				 try {
+					 if (!eachURL.startsWith("http") && !eachURL.startsWith("https")){
+						 eachURL = "http://" + eachURL;
+					 }
 					Document doc = Jsoup.connect(eachURL).get();
 					String docText = doc.text();
 					String[] allWords = docText.split(" ");
