@@ -17,10 +17,15 @@ package scrapper;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import com.jakewharton.fliptables.FlipTable;
 
@@ -29,49 +34,77 @@ import com.jakewharton.fliptables.FlipTable;
  * 
  */
 public class TextBrower {
+	private static String mainURL = "";
+
+	private static Set<String> parsedURL = new HashSet<>();
 
 	/**
 	 * Get the text content of the browser.
-	 * @param args URL to be parsed.
+	 * 
+	 * @param args
+	 *            URL to be parsed.
 	 */
 	public static void main(String[] args) {
-		if (args.length >= 1){
-			for (String eachURL: args) {
-				 try {
-					 if (!eachURL.startsWith("http") && !eachURL.startsWith("https")){
-						 eachURL = "http://" + eachURL;
-					 }
-					Document doc = Jsoup.connect(eachURL).get();
-					String docText = doc.text();
-					String[] allWords = docText.split(" ");
-					List<String> lines = new ArrayList<>();
-					StringBuilder eachLine = new StringBuilder();
-					int length = 0;
-					for (String eachWord:allWords) {
-						eachLine.append(eachWord.trim());
-						eachLine.append(" ");
-						length += eachWord.length() + 1;
-						if (length > 80) {
-							eachLine.append(System.getProperty("line.separator"));
-							length = 0;
-						}
-					}
-					lines.add(eachLine.toString());
-					
-					System.out
-					.println(FlipTable
-							.of(new String[] { eachURL },
-									new String[][] {lines.toArray(new String[0])}));
-					
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			} 
-		}else {
+		if (args.length >= 1) {
+			for (String eachURL : args) {
+
+				eachURL = processEachURL(eachURL);
+				mainURL = eachURL;
+
+			}
+		} else {
 			System.err.println("Ussage : TextBrowser <URL>");
 		}
 
+	}
+
+	public static String processEachURL(String eachURL) {
+		if (eachURL == null || StringUtils.isEmpty(eachURL)) {
+			return "";
+		}
+		try {
+			if (!eachURL.startsWith("http") && !eachURL.startsWith("https")) {
+				eachURL = "http://" + eachURL;
+			} else if (!eachURL.startsWith(mainURL)) {
+				eachURL = mainURL + eachURL;
+			}
+			Document doc = Jsoup.connect(eachURL).get();
+			String docText = doc.text();
+			String[] allWords = docText.split(" ");
+			List<String> lines = new ArrayList<>();
+			StringBuilder eachLine = new StringBuilder();
+			int length = 0;
+			for (String eachWord : allWords) {
+				eachLine.append(eachWord.trim());
+				eachLine.append(" ");
+				length += eachWord.length() + 1;
+				if (length > 80) {
+					eachLine.append(System.getProperty("line.separator"));
+					length = 0;
+				}
+			}
+			lines.add(eachLine.toString());
+
+			System.out.println(FlipTable.of(new String[] { eachURL },
+					new String[][] { lines.toArray(new String[0]) }));
+
+			Elements elts = doc.select("a");
+			for (Element each : elts) {
+				try {
+					String url = each.attr("href");
+					if (parsedURL.add(url)) {
+						processEachURL(each.attr("href"));
+					}
+				} catch (Throwable ignore) {
+//					th.printStackTrace();
+				}
+			}
+
+		} catch (IOException ignore) {
+			// TODO Auto-generated catch block
+//			e.printStackTrace();
+		}
+		return eachURL;
 	}
 
 }
