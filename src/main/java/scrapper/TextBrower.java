@@ -34,10 +34,11 @@ import com.jakewharton.fliptables.FlipTable;
  * 
  */
 public class TextBrower {
-	private static String mainURL = "";
+	private static String mainURL;
 
 	private static Set<String> parsedURL = new HashSet<>();
-
+	
+	
 	/**
 	 * Get the text content of the browser.
 	 * 
@@ -46,11 +47,9 @@ public class TextBrower {
 	 */
 	public static void main(String[] args) {
 		if (args.length >= 1) {
-			for (String eachURL : args) {
-
-				eachURL = processEachURL(eachURL);
-				mainURL = eachURL;
-
+			for (int i = 0; i < args.length; i++) {
+				mainURL = args[i];
+				processEachURL(args[i]);
 			}
 		} else {
 			System.err.println("Ussage : TextBrowser <URL>");
@@ -58,16 +57,17 @@ public class TextBrower {
 
 	}
 
-	public static String processEachURL(String eachURL) {
+	public static void processEachURL(String eachURL) {
 		if (eachURL == null || StringUtils.isEmpty(eachURL)) {
-			return "";
+			return;
 		}
 		try {
 			if (!eachURL.startsWith("http") && !eachURL.startsWith("https")) {
 				eachURL = "http://" + eachURL;
-			} else if (!eachURL.startsWith(mainURL)) {
+			} else if (!eachURL.startsWith(mainURL) && !eachURL.contains("www")) {
 				eachURL = mainURL + eachURL;
 			}
+			
 			Document doc = Jsoup.connect(eachURL).get();
 			String docText = doc.text();
 			String[] allWords = docText.split(" ");
@@ -92,8 +92,12 @@ public class TextBrower {
 			for (Element each : elts) {
 				try {
 					String url = each.attr("href");
-					if (parsedURL.add(url)) {
-						processEachURL(each.attr("href"));
+					if (!url.startsWith(mainURL) && !url.contains(mainURL)){
+						url = mainURL + url;
+					}
+					
+					if (parsedURL.add(url) ) {
+						processEachURL(url);
 					}
 				} catch (Throwable ignore) {
 //					th.printStackTrace();
@@ -104,7 +108,7 @@ public class TextBrower {
 			// TODO Auto-generated catch block
 //			e.printStackTrace();
 		}
-		return eachURL;
+		return;
 	}
 
 }
