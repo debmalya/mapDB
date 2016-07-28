@@ -15,13 +15,17 @@
  */
 package scrapper;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -33,26 +37,41 @@ import com.jakewharton.fliptables.FlipTable;
  * @author debmalyajash
  * 
  */
-public class TextBrower {
+public class TextBrowser {
 	private static String mainURL;
 
 	private static Set<String> parsedURL = new HashSet<>();
-	
-	
+
+	private static final Logger LOGGER = Logger.getLogger(TextBrowser.class);
+
+	private static PrintWriter writer = null;
+
 	/**
 	 * Get the text content of the browser.
 	 * 
 	 * @param args
 	 *            URL to be parsed.
+	 * @throws FileNotFoundException
 	 */
-	public static void main(String[] args) {
-		if (args.length >= 1) {
-			for (int i = 0; i < args.length; i++) {
-				mainURL = args[i];
-				processEachURL(args[i]);
+	public static void main(String[] args)  {
+		try {
+			if (args.length >= 1) {
+				writer = new PrintWriter(new PrintWriter(new File(
+						"TextBrowser.txt")));
+				for (int i = 0; i < args.length; i++) {
+					mainURL = args[i];
+					processEachURL(args[i]);
+				}
+			} else {
+				System.err.println("Ussage : TextBrowser <URL>");
 			}
-		} else {
-			System.err.println("Ussage : TextBrowser <URL>");
+		} catch (Throwable th) {
+			LOGGER.error(th.getMessage(),th);
+		} finally {
+			if (writer != null) {
+				writer.flush();
+				writer.close();
+			}
 		}
 
 	}
@@ -67,7 +86,7 @@ public class TextBrower {
 			} else if (!eachURL.startsWith(mainURL) && !eachURL.contains("www")) {
 				eachURL = mainURL + eachURL;
 			}
-			
+
 			Document doc = Jsoup.connect(eachURL).get();
 			String docText = doc.text();
 			String[] allWords = docText.split(" ");
@@ -92,21 +111,21 @@ public class TextBrower {
 			for (Element each : elts) {
 				try {
 					String url = each.attr("href");
-					if (!url.startsWith(mainURL) && !url.contains(mainURL)){
+					if (!url.startsWith(mainURL) && !url.contains(mainURL)) {
 						url = mainURL + url;
 					}
-					
-					if (parsedURL.add(url) ) {
+
+					if (parsedURL.add(url)) {
 						processEachURL(url);
 					}
 				} catch (Throwable ignore) {
-//					th.printStackTrace();
+					LOGGER.error(ignore.getMessage(), ignore);
 				}
 			}
 
 		} catch (IOException ignore) {
-			// TODO Auto-generated catch block
-//			e.printStackTrace();
+			LOGGER.error(ignore.getMessage(), ignore);
+			// System.err.println(ignore.getMessage());
 		}
 		return;
 	}
