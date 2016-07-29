@@ -104,8 +104,11 @@ public class TextBrowser {
 			}
 			lines.add(eachLine.toString());
 
-			System.out.println(FlipTable.of(new String[] { eachURL },
-					new String[][] { lines.toArray(new String[0]) }));
+			String whatToWrite = FlipTable.of(new String[] { eachURL },
+					new String[][] { lines.toArray(new String[0]) });
+			System.out.println(whatToWrite);
+			
+			writer.println(whatToWrite);
 
 			Elements elts = doc.select("a");
 			for (Element each : elts) {
