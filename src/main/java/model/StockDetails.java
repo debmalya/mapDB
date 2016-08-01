@@ -44,6 +44,8 @@ public class StockDetails implements Serializable {
 	private String daysRange;
 	private String yrRange;
 	private String volume;
+
+
 	private String averageVolume;
 	private String peRatio;
 	private String eps;
@@ -703,6 +705,13 @@ public class StockDetails implements Serializable {
 	public void setStockName(String stockName) {
 		this.stockName = stockName;
 		
+	}
+	
+	/**
+	 * @return the volume
+	 */
+	public String getVolume() {
+		return volume;
 	}
 
 }
