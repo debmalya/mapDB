@@ -15,6 +15,8 @@
  */
 package scrapper.sgx;
 
+import org.apache.log4j.Logger;
+
 import model.StockDetails;
 
 /**
@@ -22,6 +24,8 @@ import model.StockDetails;
  *
  */
 public class SGXSymbolWatcher {
+
+	private static final Logger LOGGER = Logger.getLogger(SGXSymbolWatcher.class);
 
 	/**
 	 * @param args
@@ -32,26 +36,32 @@ public class SGXSymbolWatcher {
 			StockDetails details = null;
 			StockDetails previous = null;
 			while (true) {
-				if (args.length == 1) {
-					details = scrapper.yahooFinance(args[0], "");
-				} else {
-					details = scrapper.yahooFinance(args[0], args[1]);
-				}
-				if (!details.equals(previous)) {
-					previous = details;
-					if (args.length != 3) {
-						System.out.println(details);
+				try {
+					if (args.length == 1) {
+						details = scrapper.yahooFinance(args[0], "");
 					} else {
-						if (details != null) {
-							float differnceWithTarget = Float.parseFloat(args[2])
-									- Float.parseFloat(details.getCurrentPrice());
+						details = scrapper.yahooFinance(args[0], args[1]);
+					}
+					if (!details.equals(previous)) {
+						previous = details;
+						if (args.length != 3) {
+							System.out.println(details);
+						} else {
+							if (details != null && details.getCurrentPrice() != null) {
+								float differnceWithTarget = Float.parseFloat(args[2])
+										- Float.parseFloat(details.getCurrentPrice());
 
-							System.out.println(details.getCurrentPrice() + " , " + details.getVolume() + " , "
-									+ differnceWithTarget + " , " + details.getCurrentPriceRecordTime());
+								System.out.println(details.getCurrentPrice() + " , " + details.getVolume() + " , "
+										+ differnceWithTarget + " , " + details.getCurrentPriceRecordTime());
+							}
 						}
 					}
+				} catch (Throwable th) {
+					LOGGER.error(th.getMessage(), th);
 				}
+
 			}
+
 		} else {
 			System.err.println("Usage: SGXSymbolWatcher <Symbol> (e.g. SGXSymbolWatcher 5DA)");
 		}
