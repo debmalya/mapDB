@@ -42,19 +42,18 @@ public class SGXSymbolWatcher {
 					if (args.length != 3) {
 						System.out.println(details);
 					} else {
-						float differnceWithTarget = Float.parseFloat(args[2])
-								- Float.parseFloat(details.getCurrentPrice());
+						if (details != null) {
+							float differnceWithTarget = Float.parseFloat(args[2])
+									- Float.parseFloat(details.getCurrentPrice());
 
-						System.out.println(details.getCurrentPrice() + " , "
-								+ details.getVolume() + " , "
-								+ differnceWithTarget + " , "
-								+ details.getCurrentPriceRecordTime());
+							System.out.println(details.getCurrentPrice() + " , " + details.getVolume() + " , "
+									+ differnceWithTarget + " , " + details.getCurrentPriceRecordTime());
+						}
 					}
 				}
 			}
 		} else {
-			System.err
-					.println("Usage: SGXSymbolWatcher <Symbol> (e.g. SGXSymbolWatcher 5DA)");
+			System.err.println("Usage: SGXSymbolWatcher <Symbol> (e.g. SGXSymbolWatcher 5DA)");
 		}
 
 	}
