@@ -28,6 +28,10 @@ public class ShareJunctionScrapper {
 		Element doc = Jsoup.connect(url).get();
 		Element stockInfo = doc.getElementById("stockinfo");
 		System.out.println(stockInfo.text());
+		String[] entries = stockInfo.text().split(":");
+		for (String each:entries){
+			System.out.println(each);
+		}
 	}
 
 }
