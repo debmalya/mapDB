@@ -14,6 +14,10 @@ Run worldMarket.sh and if everything is fine, you view the screen like below.
 Added monitoring for Singapore stock exchange.
 Edit src/main/resources/monitor_symbol.properties
 monitor=5OT,P8Z,5TP,KJ9,C29,573
+balance=1000.00
+
+
 
 Edit the symbols you monitor. Then run ./sgxMonitor.sh
+The right most column is the maximum quantity you can buy using the balance.
 ![SGX Customized Monitor](./images/Monitor.png)
