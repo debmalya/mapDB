@@ -32,7 +32,7 @@ public class SGXSymbolWatcher {
 	 */
 	public static void main(String[] args) {
 		if (args.length > 0) {
-			SGXScrapper scrapper = new SGXScrapper();
+			SGXScrapper scrapper = new SGXScrapper(false);
 			StockDetails details = null;
 			StockDetails previous = null;
 			while (true) {

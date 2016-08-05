@@ -45,7 +45,6 @@ public class StockDetails implements Serializable {
 	private String yrRange;
 	private String volume;
 
-
 	private String averageVolume;
 	private String peRatio;
 	private String eps;
@@ -159,9 +158,8 @@ public class StockDetails implements Serializable {
 		this.currentPriceRecordTime = currentPriceRecordTime;
 	}
 
-	public StockDetails(String exchange, String symbol, String currentPrice,
-			float lastPrice, float change, String marketCapital,
-			String lastPriceRecordTime, String currentPriceRecordTime) {
+	public StockDetails(String exchange, String symbol, String currentPrice, float lastPrice, float change,
+			String marketCapital, String lastPriceRecordTime, String currentPriceRecordTime) {
 		super();
 		this.exchange = exchange;
 		this.symbol = symbol;
@@ -180,18 +178,15 @@ public class StockDetails implements Serializable {
 
 	}
 
-	public static final Attribute<StockDetails, String> SYMBOL = new SimpleAttribute<StockDetails, String>(
-			"symbol") {
-		public String getValue(StockDetails stockDetails,
-				QueryOptions queryOptions) {
+	public static final Attribute<StockDetails, String> SYMBOL = new SimpleAttribute<StockDetails, String>("symbol") {
+		public String getValue(StockDetails stockDetails, QueryOptions queryOptions) {
 			return stockDetails.symbol;
 		}
 	};
 
 	public static final Attribute<StockDetails, String> EXCHANGE = new SimpleAttribute<StockDetails, String>(
 			"exchange") {
-		public String getValue(StockDetails stockDetails,
-				QueryOptions queryOptions) {
+		public String getValue(StockDetails stockDetails, QueryOptions queryOptions) {
 			return stockDetails.exchange;
 		}
 	};
@@ -278,7 +273,7 @@ public class StockDetails implements Serializable {
 
 		return csvHeader.toString();
 	}
-	
+
 	/**
 	 * To return result in CSV format.
 	 * 
@@ -300,26 +295,26 @@ public class StockDetails implements Serializable {
 		details.add(oneYrTargetEst != null ? oneYrTargetEst : NA);
 		details.add(beta != null ? beta : NA);
 		details.add(nextEarningDate != null ? nextEarningDate : NA);
-		
+
 		details.add(ask != null ? ask : NA);
 		details.add(daysRange != null ? daysRange : NA);
 		details.add(yrRange != null ? yrRange : NA);
 		details.add(volume != null ? volume : NA);
 		details.add(averageVolume != null ? averageVolume : NA);
 		details.add(peRatio != null ? peRatio : NA);
-		
+
 		details.add(eps != null ? eps : NA);
 		details.add(divNYield != null ? divNYield : NA);
 		details.add(exercisePrice != null ? exercisePrice : NA);
 		details.add(expirationDate != null ? expirationDate : NA);
 		details.add(expirationPrice != null ? expirationPrice : NA);
-		
+
 		details.add(type != null ? type : NA);
 		details.add(minimumTradeSize != null ? minimumTradeSize : NA);
 		details.add(share != null ? share : NA);
 		details.add(issuer != null ? issuer : NA);
 		details.add(underlying != null ? underlying : NA);
-		
+
 		details.add(yieldTTM != null ? yieldTTM : NA);
 		details.add(nav != null ? nav : NA);
 		details.add(netAssets != null ? netAssets : NA);
@@ -410,10 +405,7 @@ public class StockDetails implements Serializable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime
-				* result
-				+ ((currentPriceRecordTime == null) ? 0
-						: currentPriceRecordTime.hashCode());
+		result = prime * result + ((currentPriceRecordTime == null) ? 0 : currentPriceRecordTime.hashCode());
 		return result;
 	}
 
@@ -562,7 +554,7 @@ public class StockDetails implements Serializable {
 	public void setPERatio(String value) {
 		peRatio = value;
 	}
-	
+
 	/**
 	 * 
 	 * @return current price / last reported earning per share.
@@ -578,12 +570,12 @@ public class StockDetails implements Serializable {
 		eps = value;
 
 	}
-	
+
 	/**
 	 * 
 	 * @return earning per share.
 	 */
-	public String getEPS(){
+	public String getEPS() {
 		return eps;
 	}
 
@@ -704,14 +696,31 @@ public class StockDetails implements Serializable {
 	 */
 	public void setStockName(String stockName) {
 		this.stockName = stockName;
-		
+
 	}
-	
+
 	/**
 	 * @return the volume
 	 */
 	public String getVolume() {
 		return volume;
+	}
+
+	/**
+	 * Returns an array with values
+	 * symbol,currentPrice,currentPriceRecordTime,daysRange,yrRange,peRatio,EPS.
+	 */
+	public String[] abridged() {
+		String[] values = new String[8];
+		values[0] = symbol;
+		values[1] = currentPrice;
+		values[2] = currentPriceRecordTime;
+		values[3] = daysRange;
+		values[4] = yrRange;
+		values[5] = peRatio;
+		values[6] = eps;
+		values[7] = volume;
+		return values;
 	}
 
 }

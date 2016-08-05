@@ -52,7 +52,7 @@ public class SGXScrapperTest {
 	@Test
 	public final void testYahooFinance() {
 		long startTime = System.currentTimeMillis();
-		SGXScrapper scrapper = new SGXScrapper();
+		SGXScrapper scrapper = new SGXScrapper(false);
 		try {
 //			ExecutorService pool = Executors.newCachedThreadPool();
 			if (!symbolMap.isEmpty()) {
