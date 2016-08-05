@@ -11,7 +11,9 @@ Run worldMarket.sh and if everything is fine, you view the screen like below.
 
 ![World Market with Java FX, MapDB, GoogleFinance](WorldMarketScreenShot.png)
 
-To install added jars in lib folder
-mvn install:install-file -Dfile=./lib/com.ibm.streamsx.topology.jar -DgroupId=com.ibm -DartifactId=streamsx -Dversion=1.4 -Dpackaging=com.ibm
+Added monitoring for Singapore stock exchange.
+Edit src/main/resources/monitor_symbol.properties
+monitor=5OT,P8Z,5TP,KJ9,C29,573
 
-mvn install:install-file -Dfile=./lib/com.ibm.streams.operator.jar -DgroupId=ibm.streams -DartifactId=operator -Dversion=4.0 -Dpackaging=com.ibm
+Edit the symbols you monitor. Then run ./sgxMonitor.sh
+![SGX Customized Monitor](Monitor.png)
