@@ -11,7 +11,21 @@ Run worldMarket.sh and if everything is fine, you view the screen like below.
 
 ![World Market with Java FX, MapDB, GoogleFinance](WorldMarketScreenShot.png)
 
-To install added jars in lib folder
-mvn install:install-file -Dfile=./lib/com.ibm.streamsx.topology.jar -DgroupId=com.ibm -DartifactId=streamsx -Dversion=1.4 -Dpackaging=com.ibm
+Added monitoring for Singapore stock exchange.
+Edit src/main/resources/monitor_symbol.properties
+monitor=5OT,P8Z,5TP,KJ9,C29,573
+balance=1000.00
 
-mvn install:install-file -Dfile=./lib/com.ibm.streams.operator.jar -DgroupId=ibm.streams -DartifactId=operator -Dversion=4.0 -Dpackaging=com.ibm
+
+
+Edit the symbols you monitor. Then run ./sgxMonitor.sh
+sym - Stock Symbol
+CP - Current Price
+CPRT - Current Price Record Time
+dR - Day Range
+yR - Year Range
+pe - P/E ratio
+eps - Earning per Share
+vol - transaction volume
+qty - the maximum quantity you can buy using the balance.
+![SGX Customized Monitor](./images/Monitor.png)
