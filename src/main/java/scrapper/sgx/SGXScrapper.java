@@ -214,7 +214,6 @@ public class SGXScrapper {
 			}
 		} catch (Throwable e) {
 			LOGGER.error(url + "  ERR :" + e.getMessage(), e);
-			System.err.println(url + "  ERR :" + e.getMessage());
 		}
 		return details;
 

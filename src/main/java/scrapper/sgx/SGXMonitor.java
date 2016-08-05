@@ -94,12 +94,13 @@ public class SGXMonitor {
 						if (existingValues == null || !Arrays.equals(existingValues, values)) {
 							toBePrinted = true;
 							allRows.add(new String[] { symbol, values[1], values[2], values[3], values[4], values[5],
-									values[6], values[7], Float.toString(balance / Float.parseFloat(values[1])) });
+									values[6], values[7],
+									Integer.toString((int) (balance / Float.parseFloat(values[1]))) });
 							writer.writeNext(values);
 							writer.flush();
 							stockMap.put(symbol, values);
 						}
-						
+
 					}
 				} catch (Throwable neverMind) {
 					// Continue, never mind what ever happened
