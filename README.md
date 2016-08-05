@@ -16,4 +16,4 @@ Edit src/main/resources/monitor_symbol.properties
 monitor=5OT,P8Z,5TP,KJ9,C29,573
 
 Edit the symbols you monitor. Then run ./sgxMonitor.sh
-![SGX Customized Monitor](Monitor.png)
+![SGX Customized Monitor](./images/Monitor.png)
