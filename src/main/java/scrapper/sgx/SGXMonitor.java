@@ -93,9 +93,11 @@ public class SGXMonitor {
 						String[] values = details.abridged();
 						if (existingValues == null || !Arrays.equals(existingValues, values)) {
 							toBePrinted = true;
+							int qtyToAfford = (int) (balance / Float.parseFloat(values[1]));
+							long volume = Long.parseLong(values[7].replaceAll("\\s+","") );
 							allRows.add(new String[] { symbol, values[1], values[2], values[3], values[4], values[5],
-									values[6], values[7],
-									Integer.toString((int) (balance / Float.parseFloat(values[1]))) });
+									values[6], values[7], Integer.toString(qtyToAfford),
+									Double.toString((qtyToAfford * 1000)/ volume) });
 							writer.writeNext(values);
 							writer.flush();
 							stockMap.put(symbol, values);
@@ -117,7 +119,7 @@ public class SGXMonitor {
 				}
 
 				System.out.println(FlipTable
-						.of(new String[] { "Sym", "CP", "CPRT", "dR", "yR", "pe", "eps", "vol", "qty" }, values));
+						.of(new String[] { "Sym", "CP", "CPRT", "dR", "yR", "pe", "eps", "vol", "qty" ,"qty F" }, values));
 			}
 		}
 	}

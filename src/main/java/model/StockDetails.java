@@ -62,6 +62,10 @@ public class StockDetails implements Serializable {
 	private String netAssets;
 	private String ytdReturnMkt;
 	private String stockName;
+	private String oneYrReturn;
+	private String sector;
+	private String industry;
+	private String subIndustry;
 
 	/**
 	 * @return the previousClose
@@ -319,6 +323,9 @@ public class StockDetails implements Serializable {
 		details.add(nav != null ? nav : NA);
 		details.add(netAssets != null ? netAssets : NA);
 		details.add(ytdReturnMkt != null ? ytdReturnMkt : NA);
+		details.add(sector != null ? sector : NA);
+		details.add(industry != null ? industry : NA);
+		details.add(subIndustry != null ? subIndustry : NA); 
 
 		return details.toArray(new String[0]);
 	}
@@ -720,7 +727,39 @@ public class StockDetails implements Serializable {
 		values[5] = peRatio;
 		values[6] = eps;
 		values[7] = volume;
+		values[8] = oneYrReturn;
 		return values;
+	}
+
+	/**
+	 * @param current
+	 */
+	public void set1YrReturn(String current) {
+		oneYrReturn = current;
+	}
+
+	/**
+	 * @param current
+	 */
+	public void setSector(String current) {
+		sector = current;
+		
+	}
+
+	/**
+	 * @param current
+	 */
+	public void setIndustry(String current) {
+		industry = current;
+		
+	}
+
+	/**
+	 * @param current
+	 */
+	public void setSubIndustry(String current) {
+		subIndustry = current;
+		
 	}
 
 }
