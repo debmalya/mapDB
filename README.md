@@ -19,5 +19,13 @@ balance=1000.00
 
 
 Edit the symbols you monitor. Then run ./sgxMonitor.sh
-The right most column is the maximum quantity you can buy using the balance.
+sym - Stock Symbol
+CP - Current Price
+CPRT - Current Price Record Time
+dR - Day Range
+yR - Year Range
+pe - P/E ratio
+eps - Earning per Share
+vol - transaction volume
+qty - the maximum quantity you can buy using the balance.
 ![SGX Customized Monitor](./images/Monitor.png)
