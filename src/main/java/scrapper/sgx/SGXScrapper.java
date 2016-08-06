@@ -189,6 +189,7 @@ public class SGXScrapper {
 				details.setCurrentPrice(getValueByClass(quoteSummary, "time_rtq_ticker"));
 				details.setChange(Float.valueOf(getValueByClass(quoteSummary, "time_rtq_ticker")));
 				details.setCurrentPriceRecordTime(getValueByClass(quoteSummary, "time_rtq"));
+				details.setSource("Yahoo");
 				// If it is today's date then there is only time no date (e.g.
 				// 10:10 SGT)
 				// If it is today's then it is active, good for monitoring.

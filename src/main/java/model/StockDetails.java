@@ -66,6 +66,7 @@ public class StockDetails implements Serializable {
 	private String sector;
 	private String industry;
 	private String subIndustry;
+	private String source;
 
 	/**
 	 * @return the previousClose
@@ -718,16 +719,17 @@ public class StockDetails implements Serializable {
 	 * symbol,currentPrice,currentPriceRecordTime,daysRange,yrRange,peRatio,EPS.
 	 */
 	public String[] abridged() {
-		String[] values = new String[8];
+		String[] values = new String[10];
 		values[0] = symbol;
-		values[1] = currentPrice;
-		values[2] = currentPriceRecordTime;
-		values[3] = daysRange;
-		values[4] = yrRange;
-		values[5] = peRatio;
-		values[6] = eps;
-		values[7] = volume;
-		values[8] = oneYrReturn;
+		values[1] = currentPrice != null ? currentPrice : NA;
+		values[2] = currentPriceRecordTime != null ? currentPriceRecordTime : NA;
+		values[3] = daysRange != null ? daysRange : NA;
+		values[4] = yrRange != null ? yrRange : NA;
+		values[5] = peRatio != null ? peRatio : NA;
+		values[6] = eps != null ? eps : NA;
+		values[7] = volume != null ? volume : NA;
+		values[8] = oneYrReturn != null ? oneYrReturn : NA;
+		values[9] = source;
 		return values;
 	}
 
@@ -759,6 +761,14 @@ public class StockDetails implements Serializable {
 	 */
 	public void setSubIndustry(String current) {
 		subIndustry = current;
+		
+	}
+
+	/**
+	 * @param string
+	 */
+	public void setSource(String value) {
+		source = value;
 		
 	}
 

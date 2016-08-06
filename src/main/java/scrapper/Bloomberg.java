@@ -57,6 +57,7 @@ public class Bloomberg {
 			details.setSymbol(symbol);
 			details.setChange(Float.parseFloat(prices[1].replace("%", "")));
 			details.setCurrentPriceRecordTime(doc.getElementsByClass("price-datetime").text());
+			details.setSource("bloomberg");
 
 			Elements elements = doc.getAllElements();
 			boolean start = false;
@@ -128,7 +129,7 @@ public class Bloomberg {
 					count++;
 				}
 				if (start) {
-					System.out.println(count + " " + each.text());
+//					System.out.println(count + " " + each.text());
 					previous = current;
 				}
 
@@ -138,7 +139,7 @@ public class Bloomberg {
 				}
 
 			}
-			System.out.println(details);
+//			System.out.println(details);
 		} catch (IOException e) {
 			LOGGER.error(sb.toString() + " " + e.getMessage(), e);
 		}

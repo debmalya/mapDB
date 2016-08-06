@@ -6,13 +6,13 @@ package scrapper.sgx;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.ExecutorService;
 
 import org.apache.log4j.Logger;
 
@@ -20,6 +20,7 @@ import com.jakewharton.fliptables.FlipTable;
 
 import au.com.bytecode.opencsv.CSVWriter;
 import model.StockDetails;
+import scrapper.Bloomberg;
 
 /**
  * @author debmalyajash
@@ -44,13 +45,12 @@ public class SGXMonitor {
 
 	public static void monitor() {
 		Properties properties = new Properties();
-		// InputStream inStream =
-		// ClassLoader.getSystemResourceAsStream("monitor_symbol.properties");
 
 		try {
 			FileInputStream fis = new FileInputStream("./target/classes/monitor_symbol.properties");
 			writer = new CSVWriter(new FileWriter("sgx_monitor.csv", true));
 			SGXScrapper scrapper = new SGXScrapper(false);
+
 			properties.load(fis);
 			fis.close();
 			String value = properties.getProperty("monitor");
@@ -75,35 +75,29 @@ public class SGXMonitor {
 
 	/**
 	 * 
+	 * @param berg
 	 * @param stockMap
 	 * @param scrapper
 	 * @param symbols
 	 * @param balance
 	 */
 	private static void eachLoop(SGXScrapper scrapper, String[] symbols, float balance) {
+		// Stock Details Map from Yahoo Finance.
 		Map<String, String[]> stockMap = new HashMap<>();
+		// Stock Details Map for Bloomberg
+		Map<String, String[]> stockMapBG = new HashMap<>();
+		ExecutorService executorService = null;
 		while (true) {
 			boolean toBePrinted = false;
 			List<String[]> allRows = new ArrayList<String[]>();
 			for (String symbol : symbols) {
 				try {
-					StockDetails details = scrapper.yahooFinance(symbol, null);
-					if (details.getCurrentPrice() != null) {
-						String[] existingValues = stockMap.get(symbol);
-						String[] values = details.abridged();
-						if (existingValues == null || !Arrays.equals(existingValues, values)) {
-							toBePrinted = true;
-							int qtyToAfford = (int) (balance / Float.parseFloat(values[1]));
-							long volume = Long.parseLong(values[7].replaceAll("\\s+","") );
-							allRows.add(new String[] { symbol, values[1], values[2], values[3], values[4], values[5],
-									values[6], values[7], Integer.toString(qtyToAfford),
-									Double.toString((qtyToAfford * 1000)/ volume) });
-							writer.writeNext(values);
-							writer.flush();
-							stockMap.put(symbol, values);
-						}
+					StockDetails detailsYahoo = scrapper.yahooFinance(symbol, null);
 
-					}
+					toBePrinted = stockPrint(balance, stockMap, toBePrinted, allRows, symbol, detailsYahoo);
+					StockDetails bgDetails = Bloomberg.parse(symbol, "SP");
+					toBePrinted = stockPrint(balance, stockMapBG, toBePrinted, allRows, symbol, bgDetails);
+
 				} catch (Throwable neverMind) {
 					// Continue, never mind what ever happened
 					// just log it. later we will analyze the log using logtash
@@ -118,10 +112,41 @@ public class SGXMonitor {
 					values[i] = allRows.get(i);
 				}
 
-				System.out.println(FlipTable
-						.of(new String[] { "Sym", "CP", "CPRT", "dR", "yR", "pe", "eps", "vol", "qty" ,"qty F" }, values));
+				System.out.println(FlipTable.of(
+						new String[] { "Sym", "CP", "CPRT", "dR", "yR", "pe", "eps", "vol", "qty", "source" }, values));
 			}
 		}
+	}
+
+	private static boolean stockPrint(float balance, Map<String, String[]> stockMap, boolean toBePrinted,
+			List<String[]> allRows, String symbol, StockDetails detailsYahoo)
+			throws NumberFormatException, IOException {
+		if (detailsYahoo.getCurrentPrice() != null) {
+			String[] existingValues = stockMap.get(symbol);
+			String[] values = detailsYahoo.abridged();
+			if (existingValues == null || !Arrays.equals(existingValues, values)) {
+				toBePrinted = true;
+				int qtyToAfford = (int) (balance / Float.parseFloat(values[1]));
+				double volume = 0.00D;
+				if (values[7] != null) {
+
+					// volume = Double.parseDouble(values[7].replaceAll("\\s+",
+					// ""));
+					allRows.add(new String[] { symbol, values[1], values[2], values[3], values[4], values[5], values[6],
+							values[7], Integer.toString(qtyToAfford), values[9], });
+
+				} else {
+					LOGGER.error("Volume " + values[7] + " has issuse");
+					allRows.add(new String[] { symbol, values[1], values[2], values[3], values[4], values[5], values[6],
+							values[7], Integer.toString(qtyToAfford), values[9] });
+				}
+				writer.writeNext(values);
+				writer.flush();
+				stockMap.put(symbol, values);
+			}
+
+		}
+		return toBePrinted;
 	}
 
 }
