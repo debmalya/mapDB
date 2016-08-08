@@ -100,8 +100,8 @@ public class SGXMonitor {
 					StockDetails detailsYahoo = scrapper.yahooFinance(symbol, null);
 					toBePrinted = stockPrint(balance, stockMap, toBePrinted, allRows, symbol, detailsYahoo);
 
-					StockDetails bgDetails = Bloomberg.parse(symbol, "SP");
-					toBePrinted = stockPrint(balance, stockMapBG, toBePrinted, allRows, symbol, bgDetails);
+//					StockDetails bgDetails = Bloomberg.parse(symbol, "SP");
+//					toBePrinted = stockPrint(balance, stockMapBG, toBePrinted, allRows, symbol, bgDetails);
 
 					StockDetails shareJunctionDetails = ShareJunctionScrapper.parse(symbol);
 					toBePrinted = stockPrint(balance, stockMapShareJunction, toBePrinted, allRows, symbol,

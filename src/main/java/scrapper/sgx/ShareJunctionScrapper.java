@@ -34,6 +34,7 @@ public class ShareJunctionScrapper {
 	static {
 		shareJunctionStockMap.put("OV8", "24453");
 		shareJunctionStockMap.put("5TP", "24716");
+		shareJunctionStockMap.put("573","14718");
 	}
 
 	/**
@@ -92,7 +93,7 @@ public class ShareJunctionScrapper {
 					break;
 				case "Low":
 					stockDetails.setLow(each);
-					stockDetails.setDaysRange(each + " - " + stockDetails.getHigh());
+					stockDetails.set52wkRange(each + " - " + stockDetails.getHigh());
 					break;
 				case "Close":
 					// TODO During trading time how to get the current price ?
