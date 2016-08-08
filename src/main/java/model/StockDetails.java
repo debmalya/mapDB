@@ -67,6 +67,118 @@ public class StockDetails implements Serializable {
 	private String industry;
 	private String subIndustry;
 	private String source;
+	private String buy;
+	private String sell;
+	private String high;
+	private String low;
+	private String buyVolume;
+	private String sellVolume;
+	
+	public String getAsk() {
+		return ask;
+	}
+
+	public String getDaysRange() {
+		return daysRange;
+	}
+
+	public String getYrRange() {
+		return yrRange;
+	}
+
+	public String getAverageVolume() {
+		return averageVolume;
+	}
+
+	public String getEps() {
+		return eps;
+	}
+
+	public String getDivNYield() {
+		return divNYield;
+	}
+
+	public String getExercisePrice() {
+		return exercisePrice;
+	}
+
+	public String getExpirationDate() {
+		return expirationDate;
+	}
+
+	public String getExpirationPrice() {
+		return expirationPrice;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public String getIssuer() {
+		return issuer;
+	}
+
+	public String getUnderlying() {
+		return underlying;
+	}
+
+	public String getYieldTTM() {
+		return yieldTTM;
+	}
+
+	public String getNav() {
+		return nav;
+	}
+
+	public String getNetAssets() {
+		return netAssets;
+	}
+
+	public String getYtdReturnMkt() {
+		return ytdReturnMkt;
+	}
+
+	public String getStockName() {
+		return stockName;
+	}
+
+	public String getSector() {
+		return sector;
+	}
+
+	public String getIndustry() {
+		return industry;
+	}
+
+	public String getSubIndustry() {
+		return subIndustry;
+	}
+
+	public String getSource() {
+		return source;
+	}
+
+	public String getSell() {
+		return sell;
+	}
+
+	public String getHigh() {
+		return high;
+	}
+
+	public String getLow() {
+		return low;
+	}
+
+
+
+	public String getSellVolume() {
+		return sellVolume;
+	}
+
+	public String getBuyVolume() {
+		return buyVolume;
+	}
 
 	/**
 	 * @return the previousClose
@@ -719,7 +831,7 @@ public class StockDetails implements Serializable {
 	 * symbol,currentPrice,currentPriceRecordTime,daysRange,yrRange,peRatio,EPS.
 	 */
 	public String[] abridged() {
-		String[] values = new String[10];
+		String[] values = new String[12];
 		values[0] = symbol;
 		values[1] = currentPrice != null ? currentPrice : NA;
 		values[2] = currentPriceRecordTime != null ? currentPriceRecordTime : NA;
@@ -729,7 +841,9 @@ public class StockDetails implements Serializable {
 		values[6] = eps != null ? eps : NA;
 		values[7] = volume != null ? volume : NA;
 		values[8] = oneYrReturn != null ? oneYrReturn : NA;
-		values[9] = source;
+		values[9] = sellVolume != null ? sellVolume : NA;
+		values[10] = buyVolume != null ? buyVolume : NA;
+		values[11] = source;
 		return values;
 	}
 
@@ -769,6 +883,60 @@ public class StockDetails implements Serializable {
 	 */
 	public void setSource(String value) {
 		source = value;
+		
+	}
+
+	/**
+	 * @param each
+	 */
+	public void setBuy(String each) {
+		buy = each;
+		
+	}
+
+	/**
+	 * @param each
+	 */
+	public void setSell(String each) {
+		sell = each;
+		
+	}
+
+	/**
+	 * @param each
+	 */
+	public void setHigh(String each) {
+		high = each;
+	}
+
+	/**
+	 * @return
+	 */
+	public String getBuy() {
+		return buy;
+	}
+
+	/**
+	 * @param each
+	 */
+	public void setLow(String each) {
+		low = each;
+		
+	}
+
+	/**
+	 * @param each
+	 */
+	public void setBuyVolume(String each) {
+		buyVolume = each;
+		
+	}
+
+	/**
+	 * @param each
+	 */
+	public void setSellVolume(String each) {
+		sellVolume = each;
 		
 	}
 

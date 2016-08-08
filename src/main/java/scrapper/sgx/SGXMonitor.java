@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import com.jakewharton.fliptables.FlipTable;
@@ -33,6 +34,7 @@ public class SGXMonitor {
 	 */
 	private static final String DEFAULT_BALANCE = "1000.00";
 	private static final Logger LOGGER = Logger.getLogger(SGXMonitor.class);
+	private static final Level LOG_LEVEL = Level.INFO;
 	private static CSVWriter writer;
 
 	/**
@@ -45,6 +47,7 @@ public class SGXMonitor {
 
 	public static void monitor() {
 		Properties properties = new Properties();
+		LOGGER.setLevel(LOG_LEVEL);
 
 		try {
 			FileInputStream fis = new FileInputStream("./target/classes/monitor_symbol.properties");
@@ -86,6 +89,8 @@ public class SGXMonitor {
 		Map<String, String[]> stockMap = new HashMap<>();
 		// Stock Details Map for Bloomberg
 		Map<String, String[]> stockMapBG = new HashMap<>();
+		// Stock Details Map for Share Junction
+		Map<String, String[]> stockMapShareJunction = new HashMap<>();
 		ExecutorService executorService = null;
 		while (true) {
 			boolean toBePrinted = false;
@@ -93,10 +98,14 @@ public class SGXMonitor {
 			for (String symbol : symbols) {
 				try {
 					StockDetails detailsYahoo = scrapper.yahooFinance(symbol, null);
-
 					toBePrinted = stockPrint(balance, stockMap, toBePrinted, allRows, symbol, detailsYahoo);
+
 					StockDetails bgDetails = Bloomberg.parse(symbol, "SP");
 					toBePrinted = stockPrint(balance, stockMapBG, toBePrinted, allRows, symbol, bgDetails);
+
+					StockDetails shareJunctionDetails = ShareJunctionScrapper.parse(symbol);
+					toBePrinted = stockPrint(balance, stockMapShareJunction, toBePrinted, allRows, symbol,
+							shareJunctionDetails);
 
 				} catch (Throwable neverMind) {
 					// Continue, never mind what ever happened
@@ -112,8 +121,10 @@ public class SGXMonitor {
 					values[i] = allRows.get(i);
 				}
 
-				System.out.println(FlipTable.of(
-						new String[] { "Sym", "CP", "CPRT", "dR", "yR", "pe", "eps", "vol", "qty", "source" }, values));
+				String message = FlipTable.of(new String[] { "Sym", "CP", "CPRT", "dR", "yR", "pe", "eps", "vol",
+						"qty", "Sell", "Buy", "source" }, values);
+				System.out.println(message);
+				LOGGER.log(LOGGER.getLevel(), message);
 			}
 		}
 	}
@@ -133,12 +144,12 @@ public class SGXMonitor {
 					// volume = Double.parseDouble(values[7].replaceAll("\\s+",
 					// ""));
 					allRows.add(new String[] { symbol, values[1], values[2], values[3], values[4], values[5], values[6],
-							values[7], Integer.toString(qtyToAfford), values[9], });
+							values[7], Integer.toString(qtyToAfford), values[9], values[10], values[11], });
 
 				} else {
 					LOGGER.error("Volume " + values[7] + " has issuse");
 					allRows.add(new String[] { symbol, values[1], values[2], values[3], values[4], values[5], values[6],
-							values[7], Integer.toString(qtyToAfford), values[9] });
+							values[7], Integer.toString(qtyToAfford), values[9], values[10], values[11] });
 				}
 				writer.writeNext(values);
 				writer.flush();
