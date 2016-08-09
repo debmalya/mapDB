@@ -29,7 +29,7 @@ import model.StockDetails;
  * @author debmalyajash
  *
  */
-public class Bloomberg {
+public class Bloomberg implements Runnable {
 
 	private static final Logger LOGGER = Logger.getLogger(Bloomberg.class);
 
@@ -144,6 +144,15 @@ public class Bloomberg {
 			LOGGER.error(sb.toString() + " " + e.getMessage(), e);
 		}
 		return details;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Runnable#run()
+	 */
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
