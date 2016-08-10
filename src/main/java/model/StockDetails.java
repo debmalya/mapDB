@@ -73,7 +73,15 @@ public class StockDetails implements Serializable {
 	private String low;
 	private String buyVolume;
 	private String sellVolume;
+	private String instOwn;
 	
+	/**
+	 * @return the instOwn
+	 */
+	public String getInstOwn() {
+		return instOwn;
+	}
+
 	public String getAsk() {
 		return ask;
 	}
@@ -937,6 +945,14 @@ public class StockDetails implements Serializable {
 	 */
 	public void setSellVolume(String each) {
 		sellVolume = each;
+		
+	}
+
+	/**
+	 * @param value
+	 */
+	public void setInstOwn(String value) {
+		instOwn = value;
 		
 	}
 

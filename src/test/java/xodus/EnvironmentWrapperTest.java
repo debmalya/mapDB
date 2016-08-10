@@ -150,7 +150,7 @@ public class EnvironmentWrapperTest {
 	 * To test entity store retrieval.
 	 * Retrieval of entity.
 	 */
-	@Test
+//	@Test
 	public void testPersistentRetrieval() {
 		EnvironmentWrapper wrapper = null;
 		try {
