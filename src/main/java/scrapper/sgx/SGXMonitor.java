@@ -118,7 +118,7 @@ public class SGXMonitor {
 					try {
 						Thread.sleep(1000);
 					} catch (InterruptedException ignore) {
-						LOGGER.error("IGNORE :" + ignore.getMessage(),ignore);
+						LOGGER.error("IGNORE :" + ignore.getMessage(), ignore);
 					}
 
 				} catch (Throwable neverMind) {
@@ -138,7 +138,7 @@ public class SGXMonitor {
 				String message = FlipTable.of(new String[] { "Sym", "CP", "CPRT", "dR", "yR", "pe", "eps", "vol", "qty",
 						"Sell", "Buy", "source" }, values);
 				System.out.println(message);
-				LOGGER.log(LOGGER.getLevel(), message);
+				LOGGER.log(LOGGER.getLevel(), System.getProperty("line.separator") + message);
 			}
 		}
 	}
