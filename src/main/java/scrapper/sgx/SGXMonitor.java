@@ -137,7 +137,7 @@ public class SGXMonitor {
 
 				String message = FlipTable.of(new String[] { "Sym", "CP", "CPRT", "dR", "yR", "pe", "eps", "vol", "qty",
 						"Sell", "Buy", "source" }, values);
-				System.out.println(message);
+//				System.out.println(message);
 				LOGGER.log(LOGGER.getLevel(), System.getProperty("line.separator") + message);
 			}
 		}
