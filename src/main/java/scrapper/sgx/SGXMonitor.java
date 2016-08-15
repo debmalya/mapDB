@@ -1,6 +1,5 @@
-/**
- * 
- */
+///**
+
 package scrapper.sgx;
 
 import java.io.FileInputStream;
@@ -91,11 +90,11 @@ public class SGXMonitor {
 		Map<String, String[]> stockMapBG = new HashMap<>();
 		// Stock Details Map for Share Junction
 		Map<String, String[]> stockMapShareJunction = new HashMap<>();
-//		Stock Details Map for Google
-		Map<String,String[]> googleMap = new HashMap<>();
-		
+		// Stock Details Map for Google
+		Map<String, String[]> googleMap = new HashMap<>();
+
 		ExecutorService executorService = null;
-		
+
 		GoogleScrapper google = new GoogleScrapper();
 		while (true) {
 			boolean toBePrinted = false;
@@ -105,16 +104,22 @@ public class SGXMonitor {
 					StockDetails detailsYahoo = scrapper.yahooFinance(symbol, null);
 					toBePrinted = stockPrint(balance, stockMap, toBePrinted, allRows, symbol, detailsYahoo);
 
-					StockDetails bgDetails = Bloomberg.parse(symbol, "SP");
-					toBePrinted = stockPrint(balance, stockMapBG, toBePrinted, allRows, symbol, bgDetails);
+					// StockDetails bgDetails = Bloomberg.parse(symbol, "SP");
+					// toBePrinted = stockPrint(balance, stockMapBG,
+					// toBePrinted, allRows, symbol, bgDetails);
 
 					StockDetails shareJunctionDetails = ShareJunctionScrapper.parse(symbol);
 					toBePrinted = stockPrint(balance, stockMapShareJunction, toBePrinted, allRows, symbol,
 							shareJunctionDetails);
-					
+
 					StockDetails googleStockDetails = google.scrap(symbol);
-					toBePrinted = stockPrint(balance, googleMap, toBePrinted, allRows, symbol,
-							googleStockDetails);
+					toBePrinted = stockPrint(balance, googleMap, toBePrinted, allRows, symbol, googleStockDetails);
+
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException ignore) {
+						LOGGER.error("IGNORE :" + ignore.getMessage(),ignore);
+					}
 
 				} catch (Throwable neverMind) {
 					// Continue, never mind what ever happened
@@ -130,8 +135,8 @@ public class SGXMonitor {
 					values[i] = allRows.get(i);
 				}
 
-				String message = FlipTable.of(new String[] { "Sym", "CP", "CPRT", "dR", "yR", "pe", "eps", "vol",
-						"qty", "Sell", "Buy", "source" }, values);
+				String message = FlipTable.of(new String[] { "Sym", "CP", "CPRT", "dR", "yR", "pe", "eps", "vol", "qty",
+						"Sell", "Buy", "source" }, values);
 				System.out.println(message);
 				LOGGER.log(LOGGER.getLevel(), message);
 			}
