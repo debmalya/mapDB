@@ -11,7 +11,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.concurrent.ExecutorService;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -20,7 +19,6 @@ import com.jakewharton.fliptables.FlipTable;
 
 import au.com.bytecode.opencsv.CSVWriter;
 import model.StockDetails;
-import scrapper.Bloomberg;
 
 /**
  * @author debmalyajash
@@ -87,13 +85,13 @@ public class SGXMonitor {
 		// Stock Details Map from Yahoo Finance.
 		Map<String, String[]> stockMap = new HashMap<>();
 		// Stock Details Map for Bloomberg
-		Map<String, String[]> stockMapBG = new HashMap<>();
+//		Map<String, String[]> stockMapBG = new HashMap<>();
 		// Stock Details Map for Share Junction
 		Map<String, String[]> stockMapShareJunction = new HashMap<>();
 		// Stock Details Map for Google
 		Map<String, String[]> googleMap = new HashMap<>();
 
-		ExecutorService executorService = null;
+//		ExecutorService executorService = null;
 
 		GoogleScrapper google = new GoogleScrapper();
 		while (true) {
@@ -152,7 +150,7 @@ public class SGXMonitor {
 			if (existingValues == null || !Arrays.equals(existingValues, values)) {
 				toBePrinted = true;
 				int qtyToAfford = (int) (balance / Float.parseFloat(values[1]));
-				double volume = 0.00D;
+//				double volume = 0.00D;
 				if (values[7] != null) {
 
 					// volume = Double.parseDouble(values[7].replaceAll("\\s+",
