@@ -35,6 +35,7 @@ public class ShareJunctionScrapper {
 		shareJunctionStockMap.put("OV8", "24453");
 		shareJunctionStockMap.put("5TP", "24716");
 		shareJunctionStockMap.put("573","14718");
+		shareJunctionStockMap.put("5OT","21149");
 	}
 
 	/**
