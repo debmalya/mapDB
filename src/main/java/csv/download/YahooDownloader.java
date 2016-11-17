@@ -45,6 +45,7 @@ public class YahooDownloader implements Downloader {
 		connection = Jsoup.connect(downloadURL);
 		Document doc = null;
 		List<String[]> allRows = new ArrayList<>();
+		List<Float> closeList = new ArrayList<>();
 
 		createDirectoryIfDoesNotExist("data");
 		
@@ -65,6 +66,7 @@ public class YahooDownloader implements Downloader {
 				rowCount++;
 				if (rowCount > 2) {
 					eachRow = each.split(",");
+					float close = Float.parseFloat(eachRow[4]);
 					String[] modifiedRow = new String[eachRow.length + 2];
 					System.arraycopy(eachRow, 0, modifiedRow, 0, 7);
 					modifiedRow[7] = String.valueOf(Float

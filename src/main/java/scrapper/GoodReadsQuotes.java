@@ -31,9 +31,13 @@ import org.jsoup.select.Elements;
  */
 public class GoodReadsQuotes {
 
-	private static String URL_FIRST_PART = "https://www.goodreads.com/quotes/search?commit=Search&page=";
+//	private static String URL_FIRST_PART = "https://www.goodreads.com/quotes/search?commit=Search&page=";
+	private static String URL_FIRST_PART = "https://www.goodreads.com/author/quotes/36913.Rabindranath_Tagore?page=";
 
-	private static String URL_SECOND_PART = "&q=Vivekananda&utf8=%E2%9C%93";
+//	private static String URL_SECOND_PART = "&q=Vivekananda&utf8=%E2%9C%93";
+	private static String URL_SECOND_PART = "";
+	
+	 
 
 	private static PrintWriter quoteWriter;
 
@@ -43,9 +47,9 @@ public class GoodReadsQuotes {
 	 */
 	public static void main(String[] args) {
 		try {
-			quoteWriter = new PrintWriter("vivekananda.txt");
-			quoteWriter.println("$motivational_quotes = array(");
-			for (int i = 1; i < 33; i++) {
+			quoteWriter = new PrintWriter("rabindranath.php");
+			quoteWriter.println("<?php $motivational_quotes = array(");
+			for (int i = 1; i < 20; i++) {
 				try {
 					List<String> quoteList = getQuote(URL_FIRST_PART + i + URL_SECOND_PART, quoteWriter);
 				} catch (IOException e) {
@@ -53,7 +57,7 @@ public class GoodReadsQuotes {
 					e.printStackTrace();
 				}
 			}
-			quoteWriter.println(");");
+			quoteWriter.println("); ?>");
 		} catch (FileNotFoundException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
